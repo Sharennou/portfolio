@@ -1,53 +1,53 @@
 {
-    "title" : "Portfolio de Élie Copter",
-    "lastname": "Copter",
-    "firstname": "Élie",
-    "portrait" : "avatar.jpg",
-    "intro": "Lorem ipsum dolor sit amet, consectetur adipiscing elit.",
-    "biography": "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Duis mattis ante in orci auctor pharetra. Duis interdum erat semper nunc faucibus maximus. Proin dapibus auctor sollicitudin. Nulla mattis volutpat enim, ac ultrices odio dignissim id. Morbi nisl nisi, consequat ut finibus non, convallis interdum velit. Maecenas congue diam dolor, non elementum ipsum tincidunt vel. Sed dui ipsum, finibus rhoncus sollicitudin sit amet, varius non nulla. Duis vestibulum facilisis ligula, vel bibendum mauris aliquam in. Etiam urna ligula, pharetra a dictum et, blandit nec leo. Donec consequat tincidunt nisi at consectetur.",
+    "title" : "Portfolio de Youen Le Buan",
+    "lastname": "Le Buan",
+    "firstname": "Youen",
+    "portrait" : "youen.jpg",
+    "intro": "Bienvenue sur mon Portfolio.",
+    "biography": "Je m'appelle Youen Le Buan, j'ai 18 ans et je viens de Bretagne. Actuellement, je suis étudiant en BUT Métiers du Multimédia et de l’Internet (MMI) à Lannion, où je me forme à des domaines variés comme la gestion de projet, le développement web et la production multimédia. La course à pied joue un rôle essentiel dans ma vie : elle m’aide à cultiver une discipline mentale et un sens de l’effort que j’applique également dans mes études et projets. Mon objectif est de combiner rigueur et engagement pour contribuer à des réalisations qui ont du sens et de l’impact. Cette formation me permet d’élargir mes compétences et de m’adapter à différents besoins, tout en proposant des solutions réfléchies et cohérentes avec ma vision personnelle.",
     "cv" : "CV.pdf",
     "trainings": [
         {
             "name" : "BUT Métiers du Multimédia et de l'Internet",
             "school" : "IUT de Lannion, Université de Rennes",
-            "start" : 2023,
-            "end" : 2026
+            "start" : 2024,
+            "end" : 2027
         },
         {
-            "name" : "Bac S, option Maths et Arts Plastiques",
-            "school" : "Lycée Félix Le Dantec( 22)",
-            "start" : 2023
+            "name" : "Bac Pro, Systèmes Numériques Option RISC",
+            "school" : "Lycée Félix Le Dantec (22)",
+            "start" : 2024
         }
     ],
     "interests": [
-        "Lorem ipsum dolor sit amet, consectetur adipiscing elit.",
-        "Lorem ipsum dolor sit amet, consectetur adipiscing elit.",
-        "Lorem ipsum dolor sit amet, consectetur adipiscing elit."
+        "Le sport est ma passion principale plus précisement la course à pied.",
+        "J'ai aussi un intéret dans le Multimédia et L'internet.",
+        "J'aime écouter de la musique."
     ],
     "projects": [
         {
-            "title": "Project 1 : Lorem ipsum dolor sit amet consecitur",
+            "title": "Project 1 : Site Web de collection de pokemon",
             "context": "Lorem ipsum dolor sit amet consecitur",
             "missions" : ["Lorem ipsum dolor", "Lorem ipsum dolor"],
             "outputs" :  ["Lorem ipsum dolor", "Lorem ipsum dolor"],
             "skills": [
-                "3D",
+                "Intégration",
                 "Dev Web"
             ],
-            "link" : "https://youtube.com",
-            "picture": "projet.jpg"
+            "link" : "",
+            "picture": "image.png"
         },
         {
-            "title": "Project 2 : Lorem ipsum dolor sit amet consecitur",
+            "title": "Project 2 : Affiche de film",
             "context": "Lorem ipsum dolor sit amet consecitur",
             "missions" : ["Lorem ipsum dolor", "Lorem ipsum dolor"],
             "outputs" :  ["Lorem ipsum dolor", "Lorem ipsum dolor"],
             "skills": [
-                "Marketing",
-                "Comm"
+                "Culture artistique",
+                "Montage photo"
             ],
-            "link" : "https://youtube.com",
-            "picture": "projet.jpg"
+            "link" : "",
+            "picture": "Affiche film.jpg"
         },
         {
             "title": "Project 3 : Lorem ipsum dolor sit amet consecitur",
