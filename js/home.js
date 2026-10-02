@@ -417,13 +417,29 @@ document.querySelectorAll('.ab-postcard img').forEach(img => {
   else img.addEventListener('error', drop);
 });
 
+// Un seul tirage : sur téléphone, il accompagne le récit à droite plutôt que
+// de recouvrir la carte. Le replacer dans la scène conserve le cadrage PC.
+const aboutPhotoMedia = window.matchMedia(mobileLayoutQuery);
+const placeAboutPhotos = () => {
+  document.querySelectorAll('.ab-row--map').forEach(row => {
+    const photo = row.querySelector('.ab-postcard');
+    const scene = row.querySelector('.ab-map-scene');
+    const copy = row.querySelector('.ab-copy');
+    if (!photo || !scene || !copy) return;
+    if (aboutPhotoMedia.matches) copy.insertBefore(photo, copy.firstChild);
+    else scene.appendChild(photo);
+  });
+};
+placeAboutPhotos();
+aboutPhotoMedia.addEventListener('change', placeAboutPhotos);
+
 // L'image entre par le côté où elle se trouve : à droite pour les lignes paires,
 // à gauche pour les impaires. Le texte, lui, reste géré par .reveal — une seule
 // mécanique par élément, jamais les deux sur la même opacité.
 if (motionOK) {
-  // Les entrées latérales et le scrub restent propres au grand écran.
-  // matchMedia les retire aussi en passant du PC au téléphone sans recharger.
-  gsap.matchMedia().add(desktopLayoutQuery, () => {
+  // matchMedia adapte l'amplitude et retire les anciens transforms à la rotation.
+  const aboutMotion = gsap.matchMedia();
+  aboutMotion.add(desktopLayoutQuery, () => {
     gsap.utils.toArray('.ab-row').forEach((row, i) => {
       const dir = i % 2 === 0 ? 1 : -1;
       // La carte reste dans le fond ; ses repères s'y fondent, et la photo entre
@@ -469,6 +485,21 @@ if (motionOK) {
         {
           xPercent: 0, rotate: dir * 1.5, autoAlpha: 1, ease: 'none',
           scrollTrigger: { trigger: row, start: 'top 88%', end: 'top 38%', scrub: 0.6 }
+        });
+    });
+  });
+  aboutMotion.add(mobileLayoutQuery, () => {
+    gsap.utils.toArray('.ab-row--map').forEach(row => {
+      const photo = row.querySelector('.ab-postcard');
+      if (!photo) return;
+      gsap.fromTo(photo,
+        { xPercent: 100, rotate: 12, autoAlpha: 0 },
+        {
+          xPercent: 0, rotate: 4, autoAlpha: 1, ease: 'none',
+          scrollTrigger: {
+            trigger: row.querySelector('.ab-copy'),
+            start: 'top 90%', end: 'top 60%', scrub: 0.3
+          }
         });
     });
   });

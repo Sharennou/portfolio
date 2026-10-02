@@ -23,7 +23,7 @@ function El(id) {
     setAttribute(){}, removeAttribute(){}, getAttribute(){ return '#x'; },
     querySelector(){ return El(); }, querySelectorAll(){ return [El(), El(), El()]; },
     closest(){ return null; }, focus(){}, matches(){ return false; },
-    insertAdjacentHTML(){}, scrollIntoView(){}, getBoundingClientRect(){ return {top:0,left:0,width:0,height:0}; }
+    insertAdjacentHTML(){}, insertBefore(){}, appendChild(){}, scrollIntoView(){}, getBoundingClientRect(){ return {top:0,left:0,width:0,height:0}; }
   };
 }
 var document = {
