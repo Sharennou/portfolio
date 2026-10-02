@@ -11,11 +11,19 @@ const projectIndex = projects.findIndex(p => p.slug === wantedSlug);
 // de quelques secondes, pas un film. Sous `prefers-reduced-motion` on ne la lance
 // pas tout seul et on rend les commandes, pour que rien ne bouge sans qu'on le
 // demande — même règle que partout ailleurs sur le site.
+function youtubeConsentMarkup(p) {
+  return `<div class="video-consent">
+    <p>Vidéo YouTube désactivée.</p>
+    <button type="button" class="btn btn-outline" data-cookie-open>Choisir les cookies</button>
+    <a class="video-consent-link" href="https://www.youtube.com/watch?v=${p.video.youtube}" target="_blank" rel="noopener noreferrer">Voir sur YouTube ↗</a>
+  </div>`;
+}
+
 function projectMedia(p) {
   if (p.video) {
     if (p.video.youtube) {
-      return `<div class="pd-media reveal">
-        <iframe class="pd-video" src="https://www.youtube-nocookie.com/embed/${p.video.youtube}" title="${p.video.alt}" loading="lazy" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe>
+      return `<div class="pd-media pd-media--youtube reveal">
+        ${youtubeConsentMarkup(p)}
       </div>`;
     }
     const auto = reducedMotion ? 'controls' : 'autoplay loop muted playsinline';
@@ -24,8 +32,14 @@ function projectMedia(p) {
     </div>`;
   }
   if (p.shots) {
-    return `<div class="pd-shots reveal">${p.shots.map(shot =>
-      `<img src="${shot.src}" alt="${shot.alt}" loading="lazy">`).join('')}</div>`;
+    return `<div class="pd-shots reveal">${p.shots.map((shot, index) => `
+      <figure class="pd-shot">
+        <a class="pd-shot-open" href="${shot.src}" target="_blank" rel="noopener noreferrer" data-shot-index="${index}" aria-haspopup="dialog" aria-label="Agrandir : ${shot.alt}">
+          <img src="${shot.src}" alt="${shot.alt}" loading="lazy">
+          <span class="pd-shot-hint" aria-hidden="true">Agrandir ↗</span>
+        </a>
+        <figcaption>${shot.caption || shot.alt}</figcaption>
+      </figure>`).join('')}</div>`;
   }
   return `<div class="pd-media reveal">${cardMedia(p)}</div>`;
 }
@@ -79,6 +93,96 @@ if (projectIndex === -1) {
       <span><small>Projet suivant</small><strong>${next.card.name}</strong></span>
       <span aria-hidden="true">→</span>
     </a>`;
+}
+
+// Le lecteur n'existe qu'après accord ; retirer l'accord le remplace aussitôt
+// par le choix local, sans requête YouTube ni miniature distante au préalable.
+if (projectIndex !== -1 && projects[projectIndex].video && projects[projectIndex].video.youtube) {
+  const youtubeMedia = projectPage.querySelector('.pd-media--youtube');
+  const p = projects[projectIndex];
+  if (youtubeMedia) {
+    const updateYouTube = () => {
+      if (cookieConsent.allowsYouTube()) {
+        if (youtubeMedia.querySelector('iframe')) return;
+        youtubeMedia.innerHTML = `<iframe class="pd-video" src="https://www.youtube-nocookie.com/embed/${p.video.youtube}" title="${p.video.alt}" loading="lazy" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe>`;
+      } else {
+        youtubeMedia.innerHTML = youtubeConsentMarkup(p);
+        const button = youtubeMedia.querySelector('[data-cookie-open]');
+        if (button) button.addEventListener('click', () => cookieConsent.open(button));
+      }
+    };
+    updateYouTube();
+    document.addEventListener('cookie-choice-change', updateYouTube);
+  }
+}
+
+// ============================= AFFICHES : VUE AGRANDIE =============================
+// Le dialogue natif gère Échap et le focus. Sans cette API, le lien ouvre
+// simplement l'image originale. Le zoom conserve un vrai défilement tactile.
+const imageViewer = document.getElementById('imageViewer');
+if (projectIndex !== -1 && projects[projectIndex].shots && imageViewer
+    && typeof imageViewer.showModal === 'function') {
+  const viewerImage = document.getElementById('imageViewerImage');
+  const viewerCaption = document.getElementById('imageViewerCaption');
+  const viewerStage = imageViewer.querySelector('.image-viewer-stage');
+  const zoomButton = document.getElementById('imageViewerZoom');
+  const closeButton = document.getElementById('imageViewerClose');
+  let imageTrigger = null;
+
+  const resetZoom = () => {
+    imageViewer.classList.remove('is-zoomed');
+    viewerImage.style.removeProperty('width');
+    zoomButton.textContent = 'Zoom +';
+    zoomButton.setAttribute('aria-pressed', 'false');
+    viewerStage.scrollTop = 0;
+    viewerStage.scrollLeft = 0;
+  };
+  projectPage.querySelectorAll('[data-shot-index]').forEach(link => {
+    link.addEventListener('click', event => {
+      event.preventDefault();
+      if (menuOpen) closeMenu({ restoreFocus: false });
+      const shot = projects[projectIndex].shots[Number(link.dataset.shotIndex)];
+      imageTrigger = link;
+      resetZoom();
+      viewerImage.src = shot.src;
+      viewerImage.alt = shot.alt;
+      viewerCaption.textContent = shot.caption || shot.alt;
+      imageViewer.setAttribute('aria-label', `Vue agrandie : ${shot.alt}`);
+      imageViewer.showModal();
+      lockScroll(true);
+      closeButton.focus({ preventScroll: true });
+    });
+  });
+  zoomButton.addEventListener('click', () => {
+    if (imageViewer.classList.contains('is-zoomed')) { resetZoom(); return; }
+    const width = viewerImage.getBoundingClientRect().width;
+    if (!width) return;
+    imageViewer.classList.add('is-zoomed');
+    viewerImage.style.width = `${width * 2}px`;
+    zoomButton.textContent = 'Zoom −';
+    zoomButton.setAttribute('aria-pressed', 'true');
+  });
+  closeButton.addEventListener('click', () => imageViewer.close());
+  imageViewer.addEventListener('keydown', event => {
+    if (event.key !== 'Tab') return;
+    const controls = [zoomButton, closeButton];
+    const current = controls.indexOf(document.activeElement);
+    const next = current === -1 ? 0 : (current + (event.shiftKey ? -1 : 1) + controls.length) % controls.length;
+    event.preventDefault();
+    controls[next].focus();
+  });
+  imageViewer.addEventListener('click', event => {
+    if (event.target !== imageViewer) return;
+    const box = imageViewer.getBoundingClientRect();
+    if (event.clientX < box.left || event.clientX > box.right
+        || event.clientY < box.top || event.clientY > box.bottom) imageViewer.close();
+  });
+  imageViewer.addEventListener('close', () => {
+    lockScroll(false);
+    resetZoom();
+    if (imageTrigger) imageTrigger.focus({ preventScroll: true });
+    imageTrigger = null;
+  });
 }
 
 // Fichier absent ou codec illisible (un .mov d'export, typiquement) : on remet le

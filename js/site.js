@@ -294,6 +294,89 @@ if (footEl) {
     .join('');
 }
 
+// ============================= COOKIES : CHOIX COMMUN AUX TROIS PAGES =============================
+// Seules les vidéos YouTube sont optionnelles. Aucun lecteur externe ne doit
+// être créé avant l'accord. Accepter et refuser sont mémorisés de la même façon.
+const cookieConsent = (() => {
+  const storageKey = 'ylb-cookie-choice';
+  const lifetime = 180 * 24 * 60 * 60 * 1000;
+  const banner = document.getElementById('cookieBanner');
+  const settings = document.getElementById('cookieSettings');
+  const accept = document.getElementById('cookieAccept');
+  const reject = document.getElementById('cookieReject');
+  const dismiss = document.getElementById('cookieDismiss');
+  const text = document.getElementById('cookieText');
+  let initiator = null;
+  let returnRegion = null;
+
+  const readChoice = () => {
+    try {
+      const saved = JSON.parse(window.localStorage.getItem(storageKey));
+      if (saved && saved.version === 1 && typeof saved.youtube === 'boolean'
+          && Number.isFinite(saved.expires) && saved.expires > Date.now()) {
+        return saved.youtube;
+      }
+    } catch (_) { /* Le site reste utilisable si le stockage est bloqué. */ }
+    return null;
+  };
+  let choice = readChoice();
+
+  const notify = () => document.dispatchEvent(new CustomEvent('cookie-choice-change'));
+  const hide = () => {
+    if (banner) banner.hidden = true;
+    const target = initiator && initiator.isConnected ? initiator
+      : returnRegion && returnRegion.querySelector('iframe, [data-cookie-open]');
+    if (target) target.focus({ preventScroll: true });
+    initiator = null;
+    returnRegion = null;
+  };
+  const open = (trigger = null) => {
+    if (!banner) return;
+    initiator = trigger;
+    returnRegion = trigger ? trigger.closest('.pd-media--youtube') : null;
+    text.textContent = choice === null
+      ? 'Votre accord permet de charger les vidéos YouTube. Vous pouvez continuer sans.'
+      : `Les vidéos YouTube sont ${choice ? 'activées' : 'désactivées'}. Vous pouvez modifier votre choix.`;
+    dismiss.setAttribute('aria-label', choice === null ? 'Continuer sans accepter' : 'Fermer les préférences');
+    banner.hidden = false;
+    // Pas de focus imposé à l'arrivée : seulement après une demande explicite.
+    if (trigger) reject.focus({ preventScroll: true });
+  };
+  const choose = (youtube) => {
+    choice = youtube;
+    try {
+      window.localStorage.setItem(storageKey, JSON.stringify({
+        version: 1, youtube, expires: Date.now() + lifetime
+      }));
+    } catch (_) { /* Le choix reste valable pour cette page. */ }
+    notify();
+    hide();
+  };
+  const close = () => choice === null ? choose(false) : hide();
+
+  if (banner && settings && accept && reject && dismiss && text) {
+    settings.hidden = false;
+    settings.addEventListener('click', () => open(settings));
+    accept.addEventListener('click', () => choose(true));
+    reject.addEventListener('click', () => choose(false));
+    dismiss.addEventListener('click', close);
+    document.addEventListener('keydown', event => {
+      if (event.key === 'Escape' && !banner.hidden && banner.contains(document.activeElement)) close();
+    });
+    if (choice === null) open();
+  }
+  // Un refus dans un autre onglet retire aussi les lecteurs déjà chargés ici.
+  window.addEventListener('storage', event => {
+    if (event.key !== storageKey && event.key !== null) return;
+    choice = readChoice();
+    if (choice === null) open();
+    else if (banner) banner.hidden = true;
+    notify();
+  });
+
+  return { open, allowsYouTube: () => choice === true };
+})();
+
 // ============================= BARRE : CLAIR OU SOMBRE =============================
 // Le logo et les boutons doivent rester lisibles sur toutes les sections. Un
 // mix-blend-mode serait plus élégant mais ne peut pas marcher : .site-header est

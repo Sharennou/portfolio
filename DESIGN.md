@@ -1,5 +1,17 @@
 # Design — Portfolio
 
+## Bannière cookies
+
+- Petite carte en bas à gauche, sans fond assombri ni blocage du défilement. « Refuser » et « Accepter » ont la même présentation. La croix ferme la première demande en conservant les vidéos désactivées ; lors d'une réouverture, elle conserve le choix existant.
+- Le refus et l'accord sont mémorisés pendant 180 jours dans `localStorage` (`ylb-cookie-choice`). Le bouton « Cookies » du pied de page permet de modifier le choix sur les cinq pages. Le site reste utilisable si le stockage est indisponible.
+- Seules les vidéos YouTube sont optionnelles : aucun lecteur ni miniature distante avant acceptation. Le cadre propose les préférences ou un lien vers YouTube. Retirer l'accord supprime le lecteur, y compris dans les autres onglets ouverts. Aucun focus imposé à l'arrivée ; un choix ouvert explicitement reste utilisable au clavier, avec retour au bouton ou à la vidéo.
+
+## Affiches et pages légales
+
+Les deux affiches de rappeurs portent une légende visible et une description alternative. Un clic ouvre leur image originale dans un `<dialog>` natif : commandes de zoom ×2 et de fermeture, image défilable au tactile, fermeture par Échap ou par clic sur le fond. La page conserve sa position derrière la vue agrandie. Sans prise en charge du dialogue, les liens ouvrent directement l'image.
+
+La vidéo de Paris (`Qtteu5kizCw`) suit le même choix de cookies que Kostum, sans lecture automatique. Les pages `rgpd.html` et `cgu.html` reprennent les polices, les couleurs et le menu du portfolio, avec une colonne de lecture de 760 px maximum. Elles sont accessibles depuis le pied de page de chacune des cinq pages ; la bannière comporte aussi un lien vers la confidentialité.
+
 ## Responsive du 2 octobre 2026
 
 - Le rendu PC est conservé à partir de 860px. Les nouvelles règles s'appliquent sous 860px et aux écrans tactiles sans survol jusqu'à 999px, pour les téléphones en paysage. Les conditions CSS et GSAP partagent ces mêmes limites.
@@ -18,7 +30,7 @@ La direction actuelle est créative et éditoriale. Ces règles décrivent la pr
 - Expériences : six lignes éditoriales réparties sur deux colonnes, avec numéro, logo, rôle, organisme et période visibles. Le texte et les étiquettes s'ouvrent dans un `details` natif ; GSAP anime la hauteur et ne laisse qu'une expérience ouverte à la fois. Sous 860 px, les lignes passent en une colonne.
 - Formation : deux lignes repliables suivant le même rythme, avec école, diplôme, période et statut visibles. L'ouverture est indépendante des expériences ; sans GSAP ou en réduction de mouvement, les `details` restent utilisables nativement.
 - Les rayons et pastilles sont partagés avec la fiche projet. Palette, largeur de contenu, navigation, section des passions et animations existantes sont conservées.
-- L'accueil traite le portrait comme une sérigraphie éditoriale : la photo détourée reste naturelle, s'ancre au bas de la section et une seconde silhouette monochrome bleue légèrement décalée crée un relief graphique directement lié au corps. Au bas du portrait, une copie de la photo est floutée et fondue dans le fond ; la silhouette bleue disparaît avant cette zone pour ne pas teinter la transition. Il n'y a ni bulle, ni orbite, ni texte autour du visage. Le dernier vers du titre écrit et efface « des sites », « des images » et « des visuels » ; le texte complet reste disponible pour les lecteurs d'écran et l'animation se fige en réduction de mouvement.
+- L'accueil traite le portrait comme une sérigraphie éditoriale : la photo détourée reste naturelle, s'ancre au bas de la section et une seconde silhouette monochrome bleue légèrement décalée crée un relief graphique directement lié au corps. Au bas du portrait, une copie de la photo est floutée et fondue dans le fond ; la silhouette bleue disparaît avant cette zone pour ne pas teinter la transition. Il n'y a ni bulle, ni orbite, ni texte autour du visage. Le dernier vers du titre écrit et efface « des sites » et « des images » ; le texte complet reste disponible pour les lecteurs d'écran et l'animation se fige en réduction de mouvement.
 - À propos, Expériences et Formation partagent l'en-tête `.creative-head` : ligne supérieure, signe `+`, petit cartouche, grand titre et, quand nécessaire, note latérale. Compétences reste volontairement réduit au seul carrousel sur une ligne, sans cadre.
 - Passions reste un collage libre sur fond sombre : titre fixe, images sans légende et proportions réelles, puis grille asymétrique sur mobile. Les images passent devant le texte comme à l'origine, mais leurs positions de gauche sont décalées vers le centre. La course reste éloignée de la photo « Moments partagés ».
 - La palette reste volontairement limitée au noir bleuté, au blanc et au bleu. Le bleu clair porte les accents sur fond sombre ; le bleu profond les accents sur fond clair.

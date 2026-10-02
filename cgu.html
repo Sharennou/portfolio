@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+
+<title>Conditions d’utilisation — Youen Le Buan</title>
+<meta name="description" content="Conditions générales d’utilisation du portfolio de Youen Le Buan.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Unbounded:wght@500;700;800;900&family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="cs/style.css?v=20261002q">
+</head>
+<body>
+
+<header class="site-header">
+  <a href="#accueil" class="nav-logo" id="navLogo" data-home aria-label="YLB — retour en haut de page">YLB</a>
+  <!-- UN SEUL objet : capsule quand il est fermé, panneau quand il est ouvert.
+       Ne jamais le redécouper en deux (une pastille + un panneau qui se croisent
+       en fondu) : c'est ce qu'il y avait avant, et ça donnait l'impression de
+       changer de menu au lieu de le voir grandir. Le même bouton ouvre et ferme. -->
+  <div class="nav-center">
+    <div class="menu-shell" id="siteMenu">
+      <div class="menu-head">
+        <button class="pill-menu" id="burger" type="button" aria-label="Ouvrir le menu" aria-expanded="false" aria-controls="menuNav">
+          <span class="pill-dots" aria-hidden="true"><i></i><i></i><i></i><i></i></span>
+          <span>Menu</span>
+        </button>
+        <!-- le PDF s'ouvre dans le lecteur du navigateur, qui permet aussi de le télécharger -->
+        <a class="pill-cv" href="img/cv vf stage.pdf" target="_blank" rel="noopener noreferrer">
+          <span class="cv-full">Télécharger le CV</span><span class="cv-short">CV</span>
+        </a>
+      </div>
+      <!-- Hors du flux : c'est l'en-tête seul qui donne sa largeur à la capsule
+           fermée. Masqué au clavier tant que le menu n'est pas ouvert. -->
+      <nav class="menu-nav" id="menuNav" data-lenis-prevent aria-label="Navigation principale">
+        <ol class="menu-list">
+          <li><a href="#accueil" class="menu-link" data-home>
+            <span class="menu-text"><span class="menu-num" aria-hidden="true">01</span><span class="menu-label">Accueil</span></span>
+            <span class="menu-thumb" aria-hidden="true"><img src="img/photo classe.webp" alt="" loading="lazy"></span>
+          </a></li>
+          <li><a href="projets.html" class="menu-link" data-page="projets.html">
+            <span class="menu-text"><span class="menu-num" aria-hidden="true">02</span><span class="menu-label">Projets</span></span>
+            <span class="menu-thumb art-motion" aria-hidden="true"><span class="pj-art-layer"></span><span class="menu-mark">✦</span></span>
+          </a></li>
+          <li><a href="index.html#contact" class="menu-link">
+            <span class="menu-text"><span class="menu-num" aria-hidden="true">03</span><span class="menu-label">Contact</span></span>
+            <span class="menu-thumb art-video" aria-hidden="true"><span class="pj-art-layer"></span><span class="menu-mark">@</span></span>
+          </a></li>
+        </ol>
+        <!-- les liens sont construits en JS depuis le tableau `socials` de core.js -->
+        <div class="menu-social">
+          <span class="menu-social-label">Réseaux sociaux</span>
+          <ul id="menuSocial"></ul>
+        </div>
+      </nav>
+    </div>
+  </div>
+</header>
+
+<main>
+  <section data-tone="dark" id="cgu" class="legal-page">
+    <div class="section-inner">
+      <div class="legal-head">
+        <a class="pd-back" href="index.html">← Retour au portfolio</a>
+        <p class="section-kicker">Informations · CGU</p>
+        <h1 class="section-title">Conditions <span class="title-accent">d’utilisation.</span></h1>
+        <p class="legal-lede">Les règles de consultation de ce portfolio et de ses créations.</p>
+        <p class="legal-date">Dernière mise à jour : <time datetime="2026-10-02">2 octobre 2026</time></p>
+      </div>
+      <div class="legal-body">
+        <div class="legal-block">
+          <h2>1. Objet du site</h2>
+          <p>Ce portfolio présente le parcours, les compétences et les projets de <strong>Youen Le Buan</strong>. Il permet de consulter des créations, des vidéos et un CV, et de prendre contact par e-mail.</p>
+          <p>Ces conditions fournissent des informations sur la consultation du site. Aucune création de compte, publication de contenu par les visiteurs, vente ou commande n’est proposée. Elles ne constituent pas des conditions générales de vente.</p>
+        </div>
+        <div class="legal-block">
+          <h2>2. Éditeur et hébergement</h2>
+          <p>Éditeur : <strong>Youen Le Buan</strong>. Contact : <a href="mailto:youenlebuan@gmail.com">youenlebuan@gmail.com</a>.</p>
+          <p>Hébergement actuel : <strong>GitHub Pages, service de GitHub</strong>. Coordonnées publiées du prestataire : GitHub, Inc., 88 Colin P. Kelly Jr. Street, San Francisco, CA 94107, États-Unis ; GitHub B.V., Prins Bernhardplein 200, 1097 JB Amsterdam, Pays-Bas. Les modalités de contact figurent dans la <a href="https://docs.github.com/en/site-policy/privacy-policies/github-general-privacy-statement#contact-us" target="_blank" rel="noopener noreferrer">documentation de GitHub</a>.</p>
+        </div>
+        <div class="legal-block">
+          <h2>3. Accès et consultation</h2>
+          <p>La consultation est gratuite, hors coût de votre connexion. Les vidéos externes peuvent être consultées après accord depuis la bannière de cookies, ou directement sur YouTube. Refuser les vidéos intégrées ne bloque pas les autres contenus.</p>
+          <p>Le contenu peut évoluer ou être temporairement indisponible, notamment pendant une mise à jour ou une interruption technique. Si vous constatez une erreur ou un lien cassé, vous pouvez la signaler par e-mail.</p>
+        </div>
+        <div class="legal-block">
+          <h2>4. Créations et droits des tiers</h2>
+          <p>Les créations sont présentées pour illustrer le travail et le parcours de Youen. Les marques, logos, musiques, photographies d’artistes et autres éléments de tiers restent soumis aux droits de leurs titulaires. Leur présence ne signifie pas que le portfolio est un site officiel des artistes ou entreprises cités.</p>
+          <p>La consultation ou l’agrandissement d’un visuel ne donne pas d’autorisation de republication, de modification ou d’exploitation commerciale. Pour une réutilisation en dehors des exceptions prévues par la loi, contactez l’éditeur et obtenez, si nécessaire, l’autorisation des autres titulaires de droits concernés.</p>
+          <p>Si vous êtes titulaire de droits et souhaitez signaler un contenu, indiquez le projet concerné et l’objet de votre demande à <a href="mailto:youenlebuan@gmail.com">youenlebuan@gmail.com</a>.</p>
+        </div>
+        <div class="legal-block">
+          <h2>5. Usage du site et liens externes</h2>
+          <p>Utilisez le site conformément à sa destination : consulter le portfolio et échanger avec son auteur. Ne tentez pas de perturber son fonctionnement, de contourner ses protections ou d’utiliser ses contenus de manière illicite.</p>
+          <p>Youen cherche à présenter des informations exactes et à jour, mais des erreurs peuvent subsister. Les liens vers YouTube et les réseaux sociaux mènent à des services indépendants, régis par leurs propres conditions. Les dispositions de cette page ne suppriment pas les responsabilités ou droits prévus par la loi.</p>
+        </div>
+        <div class="legal-block">
+          <h2>6. Données personnelles</h2>
+          <p>Les choix de cookies, les services externes, le traitement des e-mails et les droits relatifs aux données personnelles sont décrits dans la <a href="rgpd.html">page Confidentialité et RGPD</a>.</p>
+        </div>
+        <div class="legal-block">
+          <h2>7. Mise à jour et droit applicable</h2>
+          <p>Ces informations peuvent être mises à jour pour refléter l’évolution du portfolio. La date en haut de page indique la version en vigueur.</p>
+          <p>Le droit français s’applique, sous réserve des règles impératives applicables à votre situation. Pour une difficulté, contactez d’abord <a href="mailto:youenlebuan@gmail.com">youenlebuan@gmail.com</a> afin de rechercher une solution amiable. À défaut, les juridictions compétentes sont déterminées par les règles de droit applicables.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+</main>
+
+
+
+<footer class="site-footer">
+  <span>Youen Le Buan © 2026</span>
+  <ul class="foot-links" id="footLinks"></ul>
+  <div class="foot-end">
+    <span>BUT MMI ✦ IUT de Lannion</span>
+    <nav class="foot-legal" aria-label="Informations légales">
+      <a href="rgpd.html" aria-label="Confidentialité et données personnelles (RGPD)">RGPD</a>
+      <a href="cgu.html" aria-current="page" aria-label="Conditions générales d’utilisation">CGU</a>
+      <button type="button" class="cookie-settings" id="cookieSettings" aria-controls="cookieBanner" hidden>Cookies</button>
+    </nav>
+  </div>
+</footer>
+
+<aside class="cookie-banner" id="cookieBanner" aria-labelledby="cookieTitle" aria-describedby="cookieText" aria-live="polite" hidden>
+  <button type="button" class="cookie-dismiss" id="cookieDismiss" aria-label="Continuer sans accepter"><span aria-hidden="true">×</span></button>
+  <h2 id="cookieTitle">Cookies &amp; vidéos</h2>
+  <p><span id="cookieText">Votre accord permet de charger les vidéos YouTube. Vous pouvez continuer sans.</span> <a class="cookie-policy" href="rgpd.html">En savoir plus.</a></p>
+  <div class="cookie-actions">
+    <button type="button" id="cookieReject">Refuser</button>
+    <button type="button" id="cookieAccept">Accepter</button>
+  </div>
+</aside>
+
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js" integrity="sha384-g4NTh/Iv5PPU4xPyhEWqPcwtNXOvdaDI8LLnyYfyNZOjKJeYQyjzQ9X5275eBjpt" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js" integrity="sha384-Z3REaz79l2IaAZqJsSABtTbhjgOUYyV3p90XNnAPCSHg3EMTz1fouunq9WZRtj3d" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+<script src="https://cdn.jsdelivr.net/npm/lenis@1.3.26/dist/lenis.min.js" integrity="sha384-jqpi9VmOdhyLoLURgjCn7EpnG9BbnHW57ibIZoeaIU+erWDH3k8fQQg0xH2ySjnw" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+
+<script src="js/core.js?v=20261002q"></script>
+<script src="js/site.js?v=20261002q"></script>
+</body>
+</html>

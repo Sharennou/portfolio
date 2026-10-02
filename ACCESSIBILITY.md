@@ -35,3 +35,9 @@ La bande défilante est `aria-hidden="true"` (contenu dupliqué pour la boucle =
 ## Cartes passions (À propos)
 
 Les visuels (`.viz-run`, `.viz-lift`, `.viz-eq`) sont purement décoratifs et marqués `aria-hidden="true"` sur leur conteneur `.passion-visual`. L'information reste portée par le `h3` + `p` visibles juste en dessous — ne pas mettre de texte utile uniquement dans le SVG/les `<span>` du visuel.
+
+## Agrandissement des affiches et pages légales
+
+Les affiches de `projet.html` ont un `alt` descriptif et une légende visible. Le lien d'agrandissement est utilisable au clavier et possède un nom explicite. La vue agrandie est un `<dialog>` ouvert avec `showModal()` : arrière-plan inerte, focus limité aux commandes, Échap pour fermer et retour au lien déclencheur. Le bouton de zoom indique son état avec `aria-pressed` ; les deux commandes mesurent au moins 44 px de haut.
+
+Les pages RGPD et CGU possèdent chacune un seul `h1`, suivi de `h2`. Les liens du pied de page ont un libellé accessible développé et `aria-current="page"` sur la page correspondante.

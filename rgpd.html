@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+
+<title>Confidentialité et RGPD — Youen Le Buan</title>
+<meta name="description" content="Données personnelles, cookies et services externes du portfolio de Youen Le Buan.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Unbounded:wght@500;700;800;900&family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="cs/style.css?v=20261002q">
+</head>
+<body>
+
+<header class="site-header">
+  <a href="#accueil" class="nav-logo" id="navLogo" data-home aria-label="YLB — retour en haut de page">YLB</a>
+  <!-- UN SEUL objet : capsule quand il est fermé, panneau quand il est ouvert.
+       Ne jamais le redécouper en deux (une pastille + un panneau qui se croisent
+       en fondu) : c'est ce qu'il y avait avant, et ça donnait l'impression de
+       changer de menu au lieu de le voir grandir. Le même bouton ouvre et ferme. -->
+  <div class="nav-center">
+    <div class="menu-shell" id="siteMenu">
+      <div class="menu-head">
+        <button class="pill-menu" id="burger" type="button" aria-label="Ouvrir le menu" aria-expanded="false" aria-controls="menuNav">
+          <span class="pill-dots" aria-hidden="true"><i></i><i></i><i></i><i></i></span>
+          <span>Menu</span>
+        </button>
+        <!-- le PDF s'ouvre dans le lecteur du navigateur, qui permet aussi de le télécharger -->
+        <a class="pill-cv" href="img/cv vf stage.pdf" target="_blank" rel="noopener noreferrer">
+          <span class="cv-full">Télécharger le CV</span><span class="cv-short">CV</span>
+        </a>
+      </div>
+      <!-- Hors du flux : c'est l'en-tête seul qui donne sa largeur à la capsule
+           fermée. Masqué au clavier tant que le menu n'est pas ouvert. -->
+      <nav class="menu-nav" id="menuNav" data-lenis-prevent aria-label="Navigation principale">
+        <ol class="menu-list">
+          <li><a href="#accueil" class="menu-link" data-home>
+            <span class="menu-text"><span class="menu-num" aria-hidden="true">01</span><span class="menu-label">Accueil</span></span>
+            <span class="menu-thumb" aria-hidden="true"><img src="img/photo classe.webp" alt="" loading="lazy"></span>
+          </a></li>
+          <li><a href="projets.html" class="menu-link" data-page="projets.html">
+            <span class="menu-text"><span class="menu-num" aria-hidden="true">02</span><span class="menu-label">Projets</span></span>
+            <span class="menu-thumb art-motion" aria-hidden="true"><span class="pj-art-layer"></span><span class="menu-mark">✦</span></span>
+          </a></li>
+          <li><a href="index.html#contact" class="menu-link">
+            <span class="menu-text"><span class="menu-num" aria-hidden="true">03</span><span class="menu-label">Contact</span></span>
+            <span class="menu-thumb art-video" aria-hidden="true"><span class="pj-art-layer"></span><span class="menu-mark">@</span></span>
+          </a></li>
+        </ol>
+        <!-- les liens sont construits en JS depuis le tableau `socials` de core.js -->
+        <div class="menu-social">
+          <span class="menu-social-label">Réseaux sociaux</span>
+          <ul id="menuSocial"></ul>
+        </div>
+      </nav>
+    </div>
+  </div>
+</header>
+
+<main>
+  <section data-tone="dark" id="rgpd" class="legal-page">
+    <div class="section-inner">
+      <div class="legal-head">
+        <a class="pd-back" href="index.html">← Retour au portfolio</a>
+        <p class="section-kicker">Confidentialité · RGPD</p>
+        <h1 class="section-title">Vos données <span class="title-accent">personnelles.</span></h1>
+        <p class="legal-lede">Ce que ce portfolio utilise, pourquoi, et comment garder la main sur vos données.</p>
+        <p class="legal-date">Dernière mise à jour : <time datetime="2026-10-02">2 octobre 2026</time></p>
+      </div>
+      <div class="legal-body">
+        <div class="legal-block">
+          <h2>1. Qui s’occupe de vos données ?</h2>
+          <p>Le portfolio est édité par <strong>Youen Le Buan</strong>, responsable des traitements liés à ses échanges et aux choix enregistrés par le site. Pour une question ou une demande concernant vos données : <a href="mailto:youenlebuan@gmail.com">youenlebuan@gmail.com</a>.</p>
+        </div>
+        <div class="legal-block">
+          <h2>2. Ce qui est utilisé</h2>
+          <p>Le site ne propose ni compte utilisateur, ni formulaire, ni paiement. Aucun outil de mesure d’audience n’est intégré au code du portfolio.</p>
+          <ul>
+            <li><strong>Votre choix de cookies :</strong> l’accord ou le refus du chargement des vidéos YouTube, une date d’expiration et un numéro de version. Ces informations restent dans le stockage local de votre navigateur, sous la clé <code>ylb-cookie-choice</code>, pendant <strong>180 jours</strong>. Elles servent uniquement à mémoriser votre choix et ne sont pas envoyées à Youen.</li>
+            <li><strong>Vos messages :</strong> si vous écrivez par e-mail, votre adresse, le contenu du message et les informations que vous décidez d’y joindre sont reçus dans la messagerie Gmail de Youen. Ils servent à répondre à votre demande et à suivre l’échange. Le traitement repose sur les démarches précontractuelles lorsque votre demande concerne une collaboration, ou sur l’intérêt légitime à répondre aux autres demandes.</li>
+            <li><strong>Les données techniques :</strong> l’hébergement et les fournisseurs de ressources reçoivent les informations nécessaires à une connexion, notamment l’adresse IP et les informations techniques du navigateur, pour délivrer et sécuriser les pages.</li>
+          </ul>
+          <p>Les messages sont conservés le temps nécessaire à leur traitement et au suivi de l’échange. Si une conservation est nécessaire pour une obligation légale ou la défense d’un droit, seuls les éléments utiles sont conservés pendant la durée correspondante.</p>
+        </div>
+        <div class="legal-block">
+          <h2>3. Cookies et vidéos YouTube</h2>
+          <p>Les lecteurs YouTube sont <strong>désactivés par défaut</strong>. Votre accord est demandé avant leur chargement ; refuser laisse le portfolio accessible. L’affichage des vidéos repose sur votre consentement.</p>
+          <p>En cas d’accord, le lecteur intégré en mode de confidentialité renforcée se connecte à YouTube, service de Google. Ce service peut traiter des données de connexion et utiliser ses propres traceurs. Ses règles et durées de conservation sont détaillées dans la <a href="https://policies.google.com/privacy?hl=fr" target="_blank" rel="noopener noreferrer">politique de confidentialité de Google</a>.</p>
+          <p>Le bouton <strong>Cookies</strong> du pied de page permet de modifier votre choix. Retirer l’accord enlève les lecteurs intégrés. Vous pouvez aussi supprimer le choix local dans les paramètres de votre navigateur. Cela ne supprime pas les données que YouTube aurait déjà reçues ni ses propres cookies.</p>
+          <p>Les liens « Voir sur YouTube » ouvrent directement un site externe : sa politique de confidentialité s’applique alors.</p>
+        </div>
+        <div class="legal-block">
+          <h2>4. Hébergement et autres prestataires</h2>
+          <p>L’hébergement actuel repose sur <strong>GitHub Pages</strong>. GitHub indique enregistrer l’adresse IP des visiteurs à des fins de sécurité, même sans connexion à un compte GitHub. Les durées dépendent des finalités et obligations du prestataire ; elles ne sont pas fixées par Youen. Voir la <a href="https://docs.github.com/en/pages/getting-started-with-github-pages/what-is-github-pages#data-collection" target="_blank" rel="noopener noreferrer">documentation GitHub Pages</a> et la <a href="https://docs.github.com/en/site-policy/privacy-policies/github-general-privacy-statement" target="_blank" rel="noopener noreferrer">politique de confidentialité de GitHub</a>.</p>
+          <p>Les polices sont chargées depuis <strong>Google Fonts</strong> ; les bibliothèques d’animation depuis <strong>cdnjs</strong> et <strong>jsDelivr</strong>. Ces connexions ont lieu à l’ouverture des pages, indépendamment du choix relatif à YouTube. Les destinataires techniques sont les fournisseurs de ces services. Leurs traitements sont décrits dans les politiques de <a href="https://policies.google.com/privacy?hl=fr" target="_blank" rel="noopener noreferrer">Google</a>, <a href="https://www.cloudflare.com/privacypolicy/" target="_blank" rel="noopener noreferrer">Cloudflare, qui distribue cdnjs</a>, et <a href="https://www.jsdelivr.com/terms/privacy-policy" target="_blank" rel="noopener noreferrer">jsDelivr</a>.</p>
+          <p>Ces services et la messagerie peuvent traiter des données hors de l’Espace économique européen. Leurs politiques présentent les lieux de traitement, les durées et les garanties de transfert qu’ils appliquent. Les liens vers les réseaux sociaux ne les chargent pas dans le portfolio ; les ouvrir vous conduit vers leurs propres services.</p>
+        </div>
+        <div class="legal-block">
+          <h2>5. Vos droits</h2>
+          <p>Selon le traitement et les conditions prévues par le RGPD, vous pouvez demander l’accès, la rectification, l’effacement ou la limitation de vos données, vous opposer à certains traitements et demander la portabilité. Vous pouvez retirer un consentement à tout moment, sans remettre en cause les traitements antérieurs.</p>
+          <p>Pour les données traitées par Youen, écrivez à <a href="mailto:youenlebuan@gmail.com">youenlebuan@gmail.com</a>. Une réponse est apportée dans le délai prévu par le RGPD, en principe un mois. Pour les données gérées directement par les prestataires, leurs politiques indiquent leurs contacts.</p>
+          <p>Vous pouvez vous informer sur <a href="https://www.cnil.fr/fr/mes-demarches/les-droits-pour-maitriser-vos-donnees-personnelles" target="_blank" rel="noopener noreferrer">vos droits auprès de la CNIL</a> et, si nécessaire, <a href="https://www.cnil.fr/fr/adresser-une-plainte" target="_blank" rel="noopener noreferrer">lui adresser une réclamation</a>.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+</main>
+
+
+
+<footer class="site-footer">
+  <span>Youen Le Buan © 2026</span>
+  <ul class="foot-links" id="footLinks"></ul>
+  <div class="foot-end">
+    <span>BUT MMI ✦ IUT de Lannion</span>
+    <nav class="foot-legal" aria-label="Informations légales">
+      <a href="rgpd.html" aria-current="page" aria-label="Confidentialité et données personnelles (RGPD)">RGPD</a>
+      <a href="cgu.html" aria-label="Conditions générales d’utilisation">CGU</a>
+      <button type="button" class="cookie-settings" id="cookieSettings" aria-controls="cookieBanner" hidden>Cookies</button>
+    </nav>
+  </div>
+</footer>
+
+<aside class="cookie-banner" id="cookieBanner" aria-labelledby="cookieTitle" aria-describedby="cookieText" aria-live="polite" hidden>
+  <button type="button" class="cookie-dismiss" id="cookieDismiss" aria-label="Continuer sans accepter"><span aria-hidden="true">×</span></button>
+  <h2 id="cookieTitle">Cookies &amp; vidéos</h2>
+  <p><span id="cookieText">Votre accord permet de charger les vidéos YouTube. Vous pouvez continuer sans.</span> <a class="cookie-policy" href="rgpd.html">En savoir plus.</a></p>
+  <div class="cookie-actions">
+    <button type="button" id="cookieReject">Refuser</button>
+    <button type="button" id="cookieAccept">Accepter</button>
+  </div>
+</aside>
+
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js" integrity="sha384-g4NTh/Iv5PPU4xPyhEWqPcwtNXOvdaDI8LLnyYfyNZOjKJeYQyjzQ9X5275eBjpt" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js" integrity="sha384-Z3REaz79l2IaAZqJsSABtTbhjgOUYyV3p90XNnAPCSHg3EMTz1fouunq9WZRtj3d" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+<script src="https://cdn.jsdelivr.net/npm/lenis@1.3.26/dist/lenis.min.js" integrity="sha384-jqpi9VmOdhyLoLURgjCn7EpnG9BbnHW57ibIZoeaIU+erWDH3k8fQQg0xH2ySjnw" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+
+<script src="js/core.js?v=20261002q"></script>
+<script src="js/site.js?v=20261002q"></script>
+</body>
+</html>

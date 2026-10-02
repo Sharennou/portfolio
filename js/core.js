@@ -87,6 +87,7 @@ const projects = [
       ['La publication', 'Mise en ligne sur Instagram et TikTok.']
     ],
     takeaway: "Un montage se joue autant dans ce qu'on retire que dans ce qu'on garde. Passer de 400 clips à 34 secondes oblige à faire des choix.",
+    video: { youtube: 'Qtteu5kizCw', alt: 'Vlog à Paris — montage de Youen Le Buan' },
     tools: ['DaVinci Resolve']
   },
   {
@@ -102,8 +103,8 @@ const projects = [
     // Les deux affiches, côte à côte en haut de la page du projet. En ajouter
     // une troisième ne demande qu'une ligne : la grille s'ajuste toute seule.
     shots: [
-      { src: 'img/projets/affiche-8ruki.webp', alt: "Affiche réalisée pour le rappeur 8ruki" },
-      { src: 'img/projets/affiche-jeune-morty.jpg', alt: "Affiche réalisée pour le rappeur Jeune Morty" }
+      { src: 'img/projets/affiche-8ruki.webp', alt: 'Affiche de 8ruki : portrait sur fond rose, typographie noire et collage de papier déchiré.', caption: '8ruki — portrait, textures et collage sur une palette rose, rouge et noire.' },
+      { src: 'img/projets/affiche-jeune-morty.jpg', alt: 'Affiche de Jeune Morty : deux portraits en noir et blanc, grille et typographie roses.', caption: 'Jeune Morty — composition en noir et blanc, grain et accents roses.' }
     ],
     mark: '♪',
     short: "Traduire en affiches l'univers des rappeurs que j'écoute, avec une identité visuelle propre à chacun.",
@@ -111,7 +112,7 @@ const projects = [
     brief: [
       ['Contexte', 'Projet personnel'],
       ['Série', '2 affiches à ce jour — Jeune Morty, 8ruki'],
-      ['Format', 'Horizontal, pensé pour Instagram']
+      ['Format', 'Affiches verticales']
     ],
     steps: [
       ['Les inspirations', "Recherche de références sur Pinterest pour trouver l'ambiance de chaque affiche."],

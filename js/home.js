@@ -116,7 +116,7 @@ window.addEventListener('resize', () => {
 // En réduction d'animations (ou sans temporisateur, dans le test DOM), une seule
 // formule stable est affichée.
 const heroTyped = document.getElementById('heroTyped');
-const heroPhrases = ['des sites.', 'des images.', 'des visuels.'];
+const heroPhrases = ['des sites.', 'des images.'];
 
 if (heroTyped) {
   heroTyped.textContent = heroPhrases[0];

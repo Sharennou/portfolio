@@ -1,6 +1,6 @@
 # Portfolio — Youen Le Buan
 
-Portfolio en français (trois pages) pour un étudiant en BUT MMI (IUT de Lannion) : code, vidéo, motion design, communication.
+Portfolio en français (cinq pages) pour un étudiant en BUT MMI (IUT de Lannion) : code, vidéo, motion design, communication.
 
 ## Stack
 
@@ -12,14 +12,16 @@ Deux dépendances externes, toutes deux avec hash SRI et `crossorigin` :
 
 ## Structure
 
-Trois pages qui partagent la même feuille de style et le même socle de script :
+Cinq pages qui partagent la même feuille de style et le même socle de script :
 
 - `index.html` — **accueil** : `#accueil` (clair, colonne centrée avec photo ronde) → `#competences` → `#phares` (3 projets en éventail) → `#apropos` (frise d'outils, ligne image + texte) → `#passions` (texte figé, visuels qui défilent par-dessus) → `#experience` (liste `jobs` + formation) → `#contact`
 - `projets.html` — **tous les projets** : `#projets` (titre `h1`, phrase d'intro, cartes horizontales) → `#contact`. Chaque carte ouvre la page du projet. L'ancienne galerie horizontale épinglée et sa vue plein écran `#pjDetail` ont été supprimées à la demande de l'utilisateur : ne pas les réintroduire. GSAP Flip n'est plus chargé.
 - `projet.html` — **page d'un projet**, une seule page gabarit pour tous : le projet est choisi par l'adresse `projet.html?p=slug` et rendu par `js/project.js` (titre, visuel, description, encadré « En bref », lien « Projet suivant »). Slug inconnu : message « Ce projet est introuvable » et retour à la liste. **Ne pas créer un fichier HTML par projet** : ajouter une entrée dans `projects` suffit.
-- `cs/style.css` — tout le CSS, partagé par les trois pages
+- `rgpd.html` — confidentialité : données, choix YouTube, prestataires actuels (GitHub Pages, polices et CDN), conservation et droits. Mettre à jour l'hébergement lors d'une migration.
+- `cgu.html` — conditions de consultation, éditeur, hébergement, créations et droits des tiers ; aucun service de vente.
+- `cs/style.css` — tout le CSS, partagé par les cinq pages
 - `js/core.js` — données (`projects`, `socials`) et capacités (`motionOK`), chargé en premier
-- `js/site.js` — menu, réseaux, apparitions, ancres : commun aux trois pages
+- `js/site.js` — menu, réseaux, apparitions, ancres et choix de cookies : commun aux cinq pages
 - `js/home.js` — accueil uniquement (carrousel des domaines MMI, éventail, À propos, GSAP expérience)
 - `js/gallery.js` — `projets.html` uniquement
 - `js/project.js` — `projet.html` uniquement
@@ -34,7 +36,7 @@ Trois pages qui partagent la même feuille de style et le même socle de script 
 
 Les `const` de premier niveau d'un script classique sont partagés entre fichiers : `core.js` doit donc être chargé avant les autres, et **deux fichiers ne doivent jamais déclarer le même nom** (sinon la page entière casse).
 
-**Le contact et le pied de page sont identiques sur les trois pages** : en modifiant l'un, modifier les autres.
+**Le contact est identique sur les trois pages du portfolio. Le pied de page et la bannière de cookies sont identiques sur les cinq pages**, avec les liens RGPD/CGU et le bouton Cookies : en modifiant l'un, modifier les autres.
 
 **Les apparitions `.reveal` sont ramassées au `DOMContentLoaded`**, donc après tous les scripts de page. Avant ce correctif, `site.js` les cherchait dès son chargement : tout ce que `home.js` et `gallery.js` construisent ensuite restait à opacité 0 — la liste des projets et le texte d'À propos étaient invisibles. Tout élément `.reveal` généré en JS doit l'être **pendant le chargement**, pas plus tard (sinon il faut rappeler `observeReveals()`).
 
@@ -102,7 +104,7 @@ Attention aussi aux **dépendances entre blocs** : en supprimant la vue plein é
 
 ## Cache du navigateur
 
-Les liens vers `cs/style.css` et `js/*.js` portent un numéro de version (actuellement `?v=20260921j`) dans **les trois pages**. **Après chaque modification d'un fichier CSS ou JS, changer ce numéro partout** (même valeur dans `index.html`, `projets.html` et `projet.html`). Sans ça, le navigateur peut garder l'ancien fichier en mémoire alors que le HTML est à jour : la page mélange ancien et nouveau code, et l'utilisateur voit un rendu cassé qui n'existe pas dans les fichiers — c'est arrivé avec les cartes des projets phares, dont le texte était recouvert.
+Les liens vers `cs/style.css` et `js/*.js` portent un numéro de version (actuellement `?v=20261002q`) dans **les cinq pages**. **Après chaque modification d'un fichier CSS ou JS, changer ce numéro partout** (même valeur dans `index.html`, `projets.html`, `projet.html`, `rgpd.html` et `cgu.html`). Sans ça, le navigateur peut garder l'ancien fichier en mémoire alors que le HTML est à jour : la page mélange ancien et nouveau code, et l'utilisateur voit un rendu cassé qui n'existe pas dans les fichiers — c'est arrivé avec les cartes des projets phares, dont le texte était recouvert.
 
 ## Vérifier avant de livrer
 
@@ -115,7 +117,7 @@ $JSC tests/domstub.js js/core.js js/site.js js/gallery.js -e "openMenu(); closeM
 # projet.html : sans slug, c'est la branche « projet introuvable » qui est testée
 $JSC tests/domstub.js js/core.js js/site.js js/project.js -e "openMenu(); closeMenu();"
 # l'autre branche demande un slug, posé AVANT le script (les arguments sont traités dans l'ordre)
-$JSC tests/domstub.js -e "location.search='?p=voeux-2026'" js/core.js js/site.js js/project.js -e "openMenu(); closeMenu();"
+$JSC tests/domstub.js -e "location.search='?p=affiches-rappeurs'" js/core.js js/site.js js/project.js -e "openMenu(); closeMenu();"
 ```
 
 **Tester les deux branches de `projet.js`**, pas seulement la première : la page est restée absente longtemps et son script n'avait donc jamais été exécuté. Le faux DOM a dû être complété (`location.search`, `URLSearchParams`) pour y arriver.

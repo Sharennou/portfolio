@@ -8,7 +8,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Unbounded:wght@500;700;800;900&family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="cs/style.css?v=20261002k">
+<link rel="stylesheet" href="cs/style.css?v=20261002q">
 </head>
 <body>
 
@@ -89,15 +89,33 @@
 <footer class="site-footer">
   <span>Youen Le Buan © 2026</span>
   <ul class="foot-links" id="footLinks"></ul>
-  <span class="foot-end">BUT MMI ✦ IUT de Lannion</span>
+  <div class="foot-end">
+    <span>BUT MMI ✦ IUT de Lannion</span>
+    <nav class="foot-legal" aria-label="Informations légales">
+      <a href="rgpd.html" aria-label="Confidentialité et données personnelles (RGPD)">RGPD</a>
+      <a href="cgu.html" aria-label="Conditions générales d’utilisation">CGU</a>
+      <button type="button" class="cookie-settings" id="cookieSettings" aria-controls="cookieBanner" hidden>Cookies</button>
+    </nav>
+  </div>
 </footer>
+
+<aside class="cookie-banner" id="cookieBanner" aria-labelledby="cookieTitle" aria-describedby="cookieText" aria-live="polite" hidden>
+  <button type="button" class="cookie-dismiss" id="cookieDismiss" aria-label="Continuer sans accepter"><span aria-hidden="true">×</span></button>
+  <h2 id="cookieTitle">Cookies &amp; vidéos</h2>
+  <p><span id="cookieText">Votre accord permet de charger les vidéos YouTube. Vous pouvez continuer sans.</span> <a class="cookie-policy" href="rgpd.html">En savoir plus.</a></p>
+  <div class="cookie-actions">
+    <button type="button" id="cookieReject">Refuser</button>
+    <button type="button" id="cookieAccept">Accepter</button>
+  </div>
+</aside>
+
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js" integrity="sha384-g4NTh/Iv5PPU4xPyhEWqPcwtNXOvdaDI8LLnyYfyNZOjKJeYQyjzQ9X5275eBjpt" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js" integrity="sha384-Z3REaz79l2IaAZqJsSABtTbhjgOUYyV3p90XNnAPCSHg3EMTz1fouunq9WZRtj3d" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
 <script src="https://cdn.jsdelivr.net/npm/lenis@1.3.26/dist/lenis.min.js" integrity="sha384-jqpi9VmOdhyLoLURgjCn7EpnG9BbnHW57ibIZoeaIU+erWDH3k8fQQg0xH2ySjnw" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
 
-<script src="js/core.js?v=20261002k"></script>
-<script src="js/site.js?v=20261002k"></script>
-<script src="js/gallery.js?v=20261002k"></script>
+<script src="js/core.js?v=20261002q"></script>
+<script src="js/site.js?v=20261002q"></script>
+<script src="js/gallery.js?v=20261002q"></script>
 </body>
 </html>
