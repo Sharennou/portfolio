@@ -253,7 +253,7 @@ Trois mécanismes d'apparition distincts, à ne pas mélanger :
      - une pastille et un panneau **distincts** qui se croisaient en fondu — « ça change de menu » ;
      - un **`clip-path`** animé, où le panneau ne changeait jamais de taille — « ça apparaît au lieu de s'ouvrir ».
 
-     Ce qui est animé : `width`, `height` et `border-radius` (100px → 26px), en 0,7s à l'ouverture et **0,45s à la fermeture** — l'utilisateur trouvait que le menu traînait avant de partir. **Rien d'autre ne bouge**, et c'est voulu :
+     Ce qui est animé : `width`, `height` et `border-radius` (100px → 26px), en **0,32s à l'ouverture et 0,20s à la fermeture** (0,28s / 0,18s sur téléphone). Les couleurs et le glyphe suivent en 0,20–0,25s : l'utilisateur a demandé une animation plus rapide. **Rien d'autre ne bouge**, et c'est voulu :
      - La capsule est centrée sur l'écran et ne se déplace pas, elle s'élargit autour de son axe.
      - `.menu-head` est en `justify-content: center` et **non** `space-between` : les deux libellés gardent leur écart quand le cadre s'élargit, au lieu de filer vers les bords. Demande explicite.
      - `.menu-nav` est **hors du flux** (`position: absolute`, centré). C'est ce qui permet à l'en-tête seul de donner sa largeur à la capsule fermée (`width: max-content`), et au menu de faire sa largeur à lui sans la contraindre. La hauteur ouverte se calcule donc `56 + menuNav.offsetHeight`, jamais en mesurant la capsule.

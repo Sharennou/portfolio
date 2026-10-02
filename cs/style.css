@@ -247,7 +247,7 @@ main section[id]:focus { outline: none; }
   box-shadow: 0 30px 80px rgba(3,6,13,0.6), 0 6px 16px rgba(3,6,13,0.4);
   /* la teinte se pose pendant l'agrandissement ; au retour elle saute, puisque
      cette transition disparaît avec la classe */
-  transition: background 0.8s ease, border-color 0.8s ease, box-shadow 0.8s ease;
+  transition: background 0.25s ease, border-color 0.25s ease, box-shadow 0.25s ease;
 }
 .menu-shell.is-open:hover { background: var(--paper-dim); }
 
@@ -270,7 +270,7 @@ main section[id]:focus { outline: none; }
   font-weight: 700;
   font-size: 0.95rem;
   color: var(--nav-text);
-  transition: color 0.5s ease;
+  transition: color 0.2s ease;
 }
 /* le glyphe à quatre carrés, qui pivote au survol */
 .pill-dots {
@@ -278,7 +278,7 @@ main section[id]:focus { outline: none; }
   grid-template-columns: repeat(2, 5px);
   gap: 3px;
   color: var(--nav-fg);
-  transition: transform 0.45s cubic-bezier(.16,.8,.24,1), color 0.5s ease;
+  transition: transform 0.25s cubic-bezier(.16,.8,.24,1), color 0.2s ease;
 }
 .pill-dots i { width: 5px; height: 5px; border-radius: 1.5px; background: currentColor; }
 .menu-shell:hover .pill-dots { transform: rotate(90deg); }
