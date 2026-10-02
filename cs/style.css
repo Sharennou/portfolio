@@ -2242,7 +2242,7 @@ html.lenis, html.lenis body { height: auto; }
   }
   .hero-floater { width: clamp(32px, 9vw, 48px); opacity: 0.1; }
   .hf-layers, .hf-terminal, .hf-cube, .hf-timeline { display: none; }
-  .skills { padding: 2rem 0; }
+  .skills { padding: 3.5rem 0 2rem; }
   .mq-item { font-size: clamp(1.1rem, 4.5vw, 1.75rem); }
   .marquee-track { gap: 1rem; padding-right: 1rem; }
   .mq-sep { width: 16px; }
