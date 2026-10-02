@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Projets — Youen Le Buan</title>
+<meta name="description" content="Tous les projets de Youen Le Buan, étudiant en BUT MMI à l'IUT de Lannion : vidéo, motion design, machine learning, mobilité urbaine.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Unbounded:wght@500;700;800;900&family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="cs/style.css?v=20261002a">
+</head>
+<body>
+
+<header class="site-header">
+  <a href="#accueil" class="nav-logo" id="navLogo" data-home aria-label="YLB — retour en haut de page">YLB</a>
+  <!-- UN SEUL objet : capsule quand il est fermé, panneau quand il est ouvert.
+       Ne jamais le redécouper en deux (une pastille + un panneau qui se croisent
+       en fondu) : c'est ce qu'il y avait avant, et ça donnait l'impression de
+       changer de menu au lieu de le voir grandir. Le même bouton ouvre et ferme. -->
+  <div class="nav-center">
+    <div class="menu-shell" id="siteMenu">
+      <div class="menu-head">
+        <button class="pill-menu" id="burger" type="button" aria-label="Ouvrir le menu" aria-expanded="false" aria-controls="menuNav">
+          <span class="pill-dots" aria-hidden="true"><i></i><i></i><i></i><i></i></span>
+          <span>Menu</span>
+        </button>
+        <!-- le PDF s'ouvre dans le lecteur du navigateur, qui permet aussi de le télécharger -->
+        <a class="pill-cv" href="img/cv vf stage.pdf" target="_blank" rel="noopener noreferrer">
+          <span class="cv-full">Télécharger le CV</span><span class="cv-short">CV</span>
+        </a>
+      </div>
+      <!-- Hors du flux : c'est l'en-tête seul qui donne sa largeur à la capsule
+           fermée. Masqué au clavier tant que le menu n'est pas ouvert. -->
+      <nav class="menu-nav" id="menuNav" aria-label="Navigation principale">
+        <ol class="menu-list">
+          <li><a href="#accueil" class="menu-link" data-home>
+            <span class="menu-text"><span class="menu-num" aria-hidden="true">01</span><span class="menu-label">Accueil</span></span>
+            <span class="menu-thumb" aria-hidden="true"><img src="img/photo classe.webp" alt="" loading="lazy"></span>
+          </a></li>
+          <li><a href="projets.html" class="menu-link" data-page="projets.html">
+            <span class="menu-text"><span class="menu-num" aria-hidden="true">02</span><span class="menu-label">Projets</span></span>
+            <span class="menu-thumb art-motion" aria-hidden="true"><span class="pj-art-layer"></span><span class="menu-mark">✦</span></span>
+          </a></li>
+          <li><a href="#contact" class="menu-link">
+            <span class="menu-text"><span class="menu-num" aria-hidden="true">03</span><span class="menu-label">Contact</span></span>
+            <span class="menu-thumb art-video" aria-hidden="true"><span class="pj-art-layer"></span><span class="menu-mark">@</span></span>
+          </a></li>
+        </ol>
+        <!-- les liens sont construits en JS depuis le tableau `socials` de core.js -->
+        <div class="menu-social">
+          <span class="menu-social-label">Réseaux sociaux</span>
+          <ul id="menuSocial"></ul>
+        </div>
+      </nav>
+    </div>
+  </div>
+</header>
+
+<main>
+
+  <!-- ============================= PROJETS ============================= -->
+  <section data-tone="dark" id="projets" class="plist">
+    <div class="section-inner">
+      <div class="plist-head reveal">
+        <p class="section-kicker">Vidéo · Motion design · Graphisme</p>
+        <h1 class="section-title">Tous mes <span class="title-accent">projets.</span></h1>
+        <p class="plist-lede">Projets d'école, stages et créations perso : un aperçu de ce que je fabrique.</p>
+      </div>
+      <!-- les cartes sont construites en JS depuis le tableau `projects` ; chacune ouvre projet.html?p=slug -->
+      <ul class="pcards" id="projectList"></ul>
+    </div>
+  </section>
+
+  <!-- ============================= CONTACT ============================= -->
+  <section data-tone="dark" id="contact" class="contact">
+    <div class="section-inner contact-inner">
+      <h2 class="contact-title reveal">On travaille ensemble ?</h2>
+      <a href="mailto:youenlebuan@gmail.com" class="contact-mail reveal" style="--d:0.08s">youenlebuan@gmail.com</a>
+      <p class="contact-avail reveal" style="--d:0.16s"><span class="dot"></span> Disponible immédiatement, véhiculé — Lannion et alentours</p>
+    </div>
+  </section>
+
+</main>
+
+<footer class="site-footer">
+  <span>Youen Le Buan © 2026</span>
+  <ul class="foot-links" id="footLinks"></ul>
+  <span class="foot-end">BUT MMI ✦ IUT de Lannion</span>
+</footer>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js" integrity="sha384-g4NTh/Iv5PPU4xPyhEWqPcwtNXOvdaDI8LLnyYfyNZOjKJeYQyjzQ9X5275eBjpt" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js" integrity="sha384-Z3REaz79l2IaAZqJsSABtTbhjgOUYyV3p90XNnAPCSHg3EMTz1fouunq9WZRtj3d" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+<script src="https://cdn.jsdelivr.net/npm/lenis@1.3.26/dist/lenis.min.js" integrity="sha384-jqpi9VmOdhyLoLURgjCn7EpnG9BbnHW57ibIZoeaIU+erWDH3k8fQQg0xH2ySjnw" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+
+<script src="js/core.js?v=20261002a"></script>
+<script src="js/site.js?v=20261002a"></script>
+<script src="js/gallery.js?v=20261002a"></script>
+</body>
+</html>

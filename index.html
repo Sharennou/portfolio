@@ -1,0 +1,262 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Youen Le Buan — Étudiant BUT MMI</title>
+<meta name="description" content="Portfolio de Youen Le Buan, étudiant en BUT Métiers du Multimédia et de l'Internet à l'IUT de Lannion. Code, vidéo, motion design, communication.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Unbounded:wght@500;700;800;900&family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="cs/style.css?v=20260923c">
+</head>
+<body>
+
+<header class="site-header">
+  <a href="#accueil" class="nav-logo" id="navLogo" data-home aria-label="YLB — retour en haut de page">YLB</a>
+  <!-- UN SEUL objet : capsule quand il est fermé, panneau quand il est ouvert.
+       Ne jamais le redécouper en deux (une pastille + un panneau qui se croisent
+       en fondu) : c'est ce qu'il y avait avant, et ça donnait l'impression de
+       changer de menu au lieu de le voir grandir. Le même bouton ouvre et ferme. -->
+  <div class="nav-center">
+    <div class="menu-shell" id="siteMenu">
+      <div class="menu-head">
+        <button class="pill-menu" id="burger" type="button" aria-label="Ouvrir le menu" aria-expanded="false" aria-controls="menuNav">
+          <span class="pill-dots" aria-hidden="true"><i></i><i></i><i></i><i></i></span>
+          <span>Menu</span>
+        </button>
+        <!-- le PDF s'ouvre dans le lecteur du navigateur, qui permet aussi de le télécharger -->
+        <a class="pill-cv" href="img/cv vf stage.pdf" target="_blank" rel="noopener noreferrer">
+          <span class="cv-full">Télécharger le CV</span><span class="cv-short">CV</span>
+        </a>
+      </div>
+      <!-- Hors du flux : c'est l'en-tête seul qui donne sa largeur à la capsule
+           fermée. Masqué au clavier tant que le menu n'est pas ouvert. -->
+      <nav class="menu-nav" id="menuNav" aria-label="Navigation principale">
+        <ol class="menu-list">
+          <li><a href="#accueil" class="menu-link" data-home>
+            <span class="menu-text"><span class="menu-num" aria-hidden="true">01</span><span class="menu-label">Accueil</span></span>
+            <span class="menu-thumb" aria-hidden="true"><img src="img/photo classe.webp" alt="" loading="lazy"></span>
+          </a></li>
+          <li><a href="projets.html" class="menu-link" data-page="projets.html">
+            <span class="menu-text"><span class="menu-num" aria-hidden="true">02</span><span class="menu-label">Projets</span></span>
+            <span class="menu-thumb art-motion" aria-hidden="true"><span class="pj-art-layer"></span><span class="menu-mark">✦</span></span>
+          </a></li>
+          <li><a href="#contact" class="menu-link">
+            <span class="menu-text"><span class="menu-num" aria-hidden="true">03</span><span class="menu-label">Contact</span></span>
+            <span class="menu-thumb art-video" aria-hidden="true"><span class="pj-art-layer"></span><span class="menu-mark">@</span></span>
+          </a></li>
+        </ol>
+        <!-- les liens sont construits en JS depuis le tableau `socials` de core.js -->
+        <div class="menu-social">
+          <span class="menu-social-label">Réseaux sociaux</span>
+          <ul id="menuSocial"></ul>
+        </div>
+      </nav>
+    </div>
+  </div>
+</header>
+
+<main>
+
+  <!-- ============================= HERO ============================= -->
+  <section data-tone="dark" id="accueil" class="hero">
+    <div class="hero-noise"></div>
+    <!-- Décor MMI en arrière-plan : chaque pictogramme est dessiné en SVG pour
+         rester net à toute taille. Purement décoratif, donc ignoré par les
+         lecteurs d'écran et placé hors de la zone interactive. -->
+    <div class="hero-floaters" aria-hidden="true">
+      <span class="hero-floater hf-bezier">
+        <svg viewBox="0 0 64 64" focusable="false">
+          <path d="M12 44C20 14 42 14 52 40"/><path d="M12 19h40M12 19v25M52 19v21"/>
+          <circle cx="12" cy="19" r="4"/><circle cx="12" cy="44" r="4"/><circle cx="52" cy="19" r="4"/><circle cx="52" cy="40" r="4"/>
+        </svg>
+      </span>
+      <span class="hero-floater hf-wave">
+        <svg viewBox="0 0 64 64" focusable="false">
+          <path d="M8 32h7l5-15 8 30 8-30 8 30 6-15h6"/>
+        </svg>
+      </span>
+      <span class="hero-floater hf-layers">
+        <svg viewBox="0 0 64 64" focusable="false">
+          <path d="m32 10 23 12-23 12L9 22 32 10Z"/><path d="m13 32 19 10 19-10M13 42l19 10 19-10"/>
+        </svg>
+      </span>
+      <span class="hero-floater hf-terminal">
+        <svg viewBox="0 0 64 64" focusable="false">
+          <rect x="7" y="11" width="50" height="42" rx="8"/><path d="m17 26 8 7-8 7M31 40h15"/>
+        </svg>
+      </span>
+      <span class="hero-floater hf-cube">
+        <svg viewBox="0 0 64 64" focusable="false">
+          <path d="m32 7 23 13v25L32 57 9 45V20L32 7Z"/><path d="m9 20 23 13 23-13M32 33v24"/>
+        </svg>
+      </span>
+      <span class="hero-floater hf-timeline">
+        <svg viewBox="0 0 64 64" focusable="false">
+          <rect x="7" y="12" width="50" height="40" rx="7"/><path d="M7 25h50M19 25v27M34 25v27M47 25v27"/>
+          <path d="m26 34 8 5-8 5Z"/>
+        </svg>
+      </span>
+      <span class="hero-floater hf-type">
+        <svg viewBox="0 0 64 64" focusable="false">
+          <path d="M13 16v-6h38v6M32 10v44M22 54h20"/>
+        </svg>
+      </span>
+      <span class="hero-floater hf-keyframes">
+        <svg viewBox="0 0 64 64" focusable="false">
+          <path d="M8 32h48"/><path d="m18 23 9 9-9 9-9-9 9-9Zm28 0 9 9-9 9-9-9 9-9Z"/>
+        </svg>
+      </span>
+      <span class="hero-floater hf-crop">
+        <svg viewBox="0 0 64 64" focusable="false">
+          <path d="M18 8v36c0 4 2 6 6 6h32M8 18h32c4 0 6 2 6 6v32"/>
+        </svg>
+      </span>
+    </div>
+    <div class="hero-wordmark" aria-hidden="true">MMI</div>
+    <div class="hero-inner">
+      <div class="hero-copy">
+        <h1 class="hero-title">
+          <span class="line"><span class="line-inner" style="--rd:0.1s">Moi, c'est <br class="hero-mobile-break"><em class="title-accent">Youen.</em></span></span>
+          <span class="line"><span class="line-inner" style="--rd:0.2s">Je crée</span></span>
+          <span class="line hero-type-line">
+            <span class="line-inner hero-type-wrap" style="--rd:0.3s" aria-hidden="true"><span id="heroTyped">des sites.</span><span class="hero-type-cursor"></span></span>
+            <span class="sr-only">des sites, des images et du mouvement.</span>
+          </span>
+        </h1>
+        <p class="hero-tagline">Étudiant en <b>BUT MMI</b> à <b>Lannion</b>, je transforme les idées en expériences visuelles grâce au <b>code</b>, à la <b>vidéo</b> et au <b>motion design</b>.</p>
+        <div class="hero-actions">
+          <a href="projets.html" class="btn btn-outline">Découvrir mes projets</a>
+        </div>
+      </div>
+      <figure class="hero-avatar">
+        <img class="hero-avatar-echo" src="img/photo classe.webp" alt="" aria-hidden="true">
+        <img class="hero-avatar-blur" src="img/photo classe.webp" alt="" aria-hidden="true">
+        <img class="hero-avatar-photo" src="img/photo classe.webp" alt="Portrait de Youen Le Buan">
+      </figure>
+    </div>
+  </section>
+
+  <!-- ============================= COMPÉTENCES ============================= -->
+  <section data-tone="dark" id="competences" class="skills">
+    <h2 class="sr-only">Compétences abordées en BUT MMI</h2>
+    <div class="marquee" id="mqLine" aria-hidden="true"></div>
+    <ul class="sr-only" id="skillsList"></ul>
+  </section>
+
+  <!-- ============================= PROJETS PHARES ============================= -->
+  <section data-tone="dark" id="phares" class="fan">
+    <div class="section-inner fan-inner">
+      <div class="fan-head section-head">
+        <div>
+           <h2 class="section-title">Projets <span class="title-accent">phares.</span></h2>
+        </div>
+      </div>
+      <!-- les cartes sont insérées en JS, depuis les entrées `featured` du tableau `projects` -->
+      <div class="fan-deck" id="fanDeck"></div>
+    </div>
+  </section>
+
+  <!-- ============================= À PROPOS ============================= -->
+  <section data-tone="light" id="apropos" class="about tone-light">
+    <div class="section-inner">
+      <div class="creative-head creative-head--light about-head">
+        <h2 class="section-title">À propos<br></h2>
+      </div>
+      <!-- la frise d'outils est construite en JS depuis le tableau `tools` -->
+      <div class="tools" id="toolBelt"></div>
+      <!-- les lignes sont construites en JS depuis le tableau `about` -->
+      <div class="ab-rows" id="aboutRows"></div>
+    </div>
+  </section>
+
+  <!-- ============================= PASSIONS ============================= -->
+  <!-- Le texte reste figé à l'écran pendant que le collage défile par-dessus lui. -->
+  <section data-tone="dark" id="passions" class="passions">
+    <div class="pas-text">
+      <div class="pas-copy">
+        <h2 class="section-title">Ce qui me <span class="title-accent">fait bouger.</span></h2>
+        <p class="pas-lede">Le sport, la musique, les voyages et les moments partagés nourrissent aussi ma façon de créer.</p>
+        <ul class="pas-tags" aria-label="Mes passions">
+          <li>Sport</li><li>Musique</li><li>Voyages</li><li>Audiovisuel</li>
+        </ul>
+      </div>
+    </div>
+    <!-- les 8 visuels sont insérés en JS depuis le tableau `passionShots` -->
+    <div class="pas-stage" id="pasStage"></div>
+  </section>
+
+  <!-- ============================= EXPÉRIENCE ============================= -->
+  <section data-tone="light" id="experience" class="xp tone-light">
+    <div class="section-inner">
+      <div class="section-head xp-head">
+        <div class="creative-head creative-head--light xp-creative-head">
+          <h2 class="section-title" data-gsap="head">Mes <span class="title-accent">expériences.</span></h2>
+        </div>
+      </div>
+
+      <!-- la liste est construite en JS depuis le tableau `jobs` -->
+      <ol class="jobs" id="jobList"></ol>
+
+      <div class="edu">
+        <div class="section-head edu-head">
+          <div class="creative-head creative-head--light edu-creative-head">
+            <h3 class="edu-heading">Ma <span class="title-accent">formation.</span></h3>
+          </div>
+        </div>
+        <div class="edu-grid">
+          <details class="edu-item edu-item--current">
+            <summary class="edu-summary">
+              <span class="edu-years">2024 — 2027</span>
+              <span class="edu-logo" data-mono="IUT" aria-hidden="true"><img src="img/iut lannion.webp" alt="" loading="lazy"></span>
+              <span class="edu-summary-copy"><span class="edu-title">Métiers du Multimédia et de l'Internet</span><span class="edu-school">IUT de Lannion · Lannion (22)</span><span class="edu-status">En cours</span></span>
+              <span class="entry-toggle" aria-hidden="true">+</span>
+            </summary>
+            <div class="edu-detail">
+              <p class="edu-sub">Bachelor Universitaire de Technologie<br>3<sup>e</sup> année en cours</p>
+              <p class="edu-text">Une formation très polyvalente : conduite de projet multimédia de bout en bout, développement web, production vidéo et motion design, communication.</p>
+            </div>
+          </details>
+          <details class="edu-item">
+            <summary class="edu-summary">
+              <span class="edu-years">2021 — 2024</span>
+              <span class="edu-logo" data-mono="FLD" aria-hidden="true"><img src="img/felix le dantec.webp" alt="" loading="lazy"></span>
+              <span class="edu-summary-copy"><span class="edu-title">Bac professionnel Systèmes Numériques</span><span class="edu-school">Lycée Félix Le Dantec · Lannion (22)</span><span class="edu-status">Diplômé</span></span>
+              <span class="entry-toggle" aria-hidden="true">+</span>
+            </summary>
+            <div class="edu-detail">
+              <p class="edu-sub">Enseignement secondaire<br>obtenu avec mention très bien</p>
+              <p class="edu-text">Trois ans autour des réseaux, de la maintenance informatique et de l'électricité — la base technique sur laquelle je m'appuie encore aujourd'hui.</p>
+            </div>
+          </details>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============================= CONTACT ============================= -->
+  <section data-tone="dark" id="contact" class="contact">
+    <div class="section-inner contact-inner">
+      <h2 class="contact-title reveal">On travaille ensemble ?</h2>
+      <a href="mailto:youenlebuan@gmail.com" class="contact-mail reveal" style="--d:0.08s">youenlebuan@gmail.com</a>
+    </div>
+  </section>
+
+</main>
+
+<footer class="site-footer">
+  <span>Youen Le Buan © 2026</span>
+  <ul class="foot-links" id="footLinks"></ul>
+  <span class="foot-end">BUT MMI ✦ IUT de Lannion</span>
+</footer>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js" integrity="sha384-g4NTh/Iv5PPU4xPyhEWqPcwtNXOvdaDI8LLnyYfyNZOjKJeYQyjzQ9X5275eBjpt" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js" integrity="sha384-Z3REaz79l2IaAZqJsSABtTbhjgOUYyV3p90XNnAPCSHg3EMTz1fouunq9WZRtj3d" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+<script src="https://cdn.jsdelivr.net/npm/lenis@1.3.26/dist/lenis.min.js" integrity="sha384-jqpi9VmOdhyLoLURgjCn7EpnG9BbnHW57ibIZoeaIU+erWDH3k8fQQg0xH2ySjnw" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+
+<script src="js/core.js?v=20261002a"></script>
+<script src="js/site.js?v=20261002a"></script>
+<script src="js/home.js?v=20261002a"></script>
+</body>
+</html>

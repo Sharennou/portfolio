@@ -1,0 +1,2254 @@
+/* ============================= RESET ============================= */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html { scrollbar-gutter: stable; }
+@media (prefers-reduced-motion: reduce) {
+  html { scroll-behavior: auto; }
+  *, *::before, *::after { animation-duration: 0.001ms !important; animation-iteration-count: 1 !important; transition-duration: 0.001ms !important; scroll-behavior: auto !important; }
+}
+img { max-width: 100%; display: block; }
+a { color: inherit; text-decoration: none; }
+button { font: inherit; color: inherit; background: none; border: none; cursor: pointer; }
+ul { list-style: none; }
+
+/* ============================= TOKENS ============================= */
+:root {
+  /* Palette : noir bleuté en couleur principale, bleu en couleur d'action.
+     Les noms gardent leur sens, ce sont leurs valeurs qui ont basculé :
+     `--paper` reste « la surface de la page » (désormais noire) et `--ink`
+     « ce qu'on écrit dessus » (désormais clair). De même, `--ash-dark` et
+     `--line-dark` désignent le texte secondaire et les filets **sur la surface
+     de la page**, quelle que soit sa couleur.
+     La seule section claire du site (#apropos) redéfinit ces mêmes variables
+     via `.tone-light` — c'est le seul endroit à toucher pour éclaircir un bloc. */
+  --paper: #070B14;        /* fond de page : noir légèrement bleuté */
+  --paper-dim: #101827;    /* surface d'un cran au-dessus : cartes, encadrés, survols */
+  --ink: #EDF2FF;          /* texte principal */
+  --ink-2: #0C1424;        /* fond des visuels de substitution */
+  --ink-3: #142033;        /* survol d'une carte */
+  /* Les trois seules couleurs littérales, insensibles au contexte : ce qui doit
+     rester blanc (texte sur bouton bleu, tuiles de logos), noir (texte sur une
+     pastille bleu clair) ou orange (l'épingle de la carte de Bretagne, qui doit
+     se distinguer du point bleu) même si la section autour change de ton. */
+  --white: #F9FBFF;
+  --black: #080D18;
+  --pin: #F4562A;          /* épingle « je viens d'ici » sur la carte d'À propos */
+  --blue: #2A62F0;         /* actions : boutons, liens, éléments actifs (blanc dessus : 4,9:1) */
+  --blue-deep: #1B48C0;    /* survol d'une action, et fond du bloc de contact */
+  --blue-light: #B9D2FF;   /* accent : 10,7:1 sur le fond noir, 5:1 sur le bleu foncé */
+  --ash: #9AACC9;          /* texte secondaire sur fond sombre */
+  --ash-dark: #9AACC9;     /* texte secondaire sur la surface de la page */
+  /* Gris neutre, sans bleu : pour ce qui doit s'effacer (logo, pastille du menu,
+     réseaux, bouton secondaire) afin que le bleu ne reste que sur le bouton CV. */
+  --muted: #A9B7CE;
+  --muted-deep: #D6DFEE;   /* survol/actif des éléments gris */
+  --muted-line: rgba(237,242,255,0.30); /* contour gris */
+  --muted-tint: rgba(237,242,255,0.07); /* fond très léger au survol, sans bleu */
+  --line: rgba(255,255,255,0.14);
+  --line-dark: rgba(237,242,255,0.14);
+  /* Contour de focus : le seul bleu qui tienne les 3:1 des deux côtés — 5,4:1 sur
+     le fond noir, 3,7:1 sur la section blanche. L'`outline-offset` le place en
+     dehors de l'élément, donc il reste lisible même autour d'un bouton bleu. */
+  --focus: #3B82F6;
+
+  --font-display: 'Unbounded', sans-serif;
+  --font-body: 'Inter', sans-serif;
+
+  --edge: clamp(1.25rem, 4vw, 3rem);
+  --maxw: 1150px;
+  --accent-text: var(--blue-light);
+  --radius-card: 24px;
+  --radius-media: 16px;
+  --section-space: clamp(5.5rem, 9vw, 8rem);
+  --heading-space: clamp(2.25rem, 4.5vw, 3.5rem);
+  --title-size: clamp(2rem, 5.2vw, 4rem);
+}
+
+body {
+  background: var(--paper);
+  color: var(--ink);
+  font-family: var(--font-body);
+  font-size: 16px;
+  line-height: 1.5;
+  overflow-x: hidden;
+  -webkit-font-smoothing: antialiased;
+}
+
+::selection { background: var(--blue-light); color: var(--black); }
+
+/* ============================= SECTION CLAIRE =============================
+   Le site est sombre ; une section peut repasser en clair en portant
+   `class="… tone-light"` **et** `data-tone="light"` (l'attribut, lui, sert à la
+   barre du haut — voir site.js). Tout se joue ici : on redéfinit les mêmes
+   variables, donc aucune règle de section n'a à être réécrite. Aujourd'hui,
+   seul #apropos s'en sert, à la demande de l'utilisateur. */
+.tone-light {
+  --accent-text: var(--blue-deep);
+  --paper: #FFFFFF;
+  --paper-dim: #EEF3FF;
+  --ink: #0A101C;
+  --ink-3: #E2EAFB;
+  --ash: #4A5A75;
+  --ash-dark: #4A5A75;
+  --muted: #5B6B85;
+  --muted-deep: #3A475C;
+  --muted-line: rgba(10,16,28,0.20);
+  --muted-tint: rgba(10,16,28,0.05);
+  --line: rgba(10,16,28,0.14);
+  --line-dark: rgba(10,16,28,0.14);
+  background: var(--paper);
+  color: var(--ink);
+  /* Coins arrondis en haut ET en bas : le bloc clair a l'air posé sur le noir
+     plutôt que d'y être encastré. Le noir qu'on voit dans les angles est celui
+     de <body>, qui peint derrière toutes les sections — inutile d'ajouter quoi
+     que ce soit aux sections voisines.
+     Pas d'`overflow: hidden` ici : il rognerait le léger décalage GSAP des
+     photos d'À propos, et rien à l'intérieur ne peint jusqu'aux angles. */
+  border-radius: clamp(22px, 3vw, 48px);
+}
+
+:focus-visible {
+  outline: 3px solid var(--focus);
+  outline-offset: 3px;
+}
+
+.section-inner {
+  max-width: var(--maxw);
+  margin: 0 auto;
+  padding: 0 var(--edge);
+}
+
+/* cibles de focus après navigation dans le menu, pas des éléments interactifs */
+main section[id]:focus { outline: none; }
+
+.sr-only {
+  position: absolute;
+  width: 1px; height: 1px;
+  padding: 0; margin: -1px;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+/* ============================= REVEAL ANIMATION ============================= */
+.reveal {
+  opacity: 0;
+  transform: translateY(28px);
+  transition: opacity 0.8s cubic-bezier(.16,.8,.24,1), transform 0.8s cubic-bezier(.16,.8,.24,1);
+  transition-delay: var(--d, 0s);
+}
+.reveal.in-view { opacity: 1; transform: translateY(0); }
+
+/* ============================= NAV ============================= */
+/* Logo calé sur le bord gauche de l'écran (marge --edge), pastille « Menu » au
+   milieu. Le bloc de réseaux qui occupait la droite a été retiré à la demande de
+   l'utilisateur : la barre n'a plus que ces deux éléments. Ne pas aligner le logo
+   sur la colonne de contenu : sur grand écran il se retrouvait « trop au milieu ».
+   La barre ne capte pas les clics, seuls ses enfants le font. */
+.site-header {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  padding: 1.1rem var(--edge) 0;
+  z-index: 960;
+  /* Couleurs par défaut : au-dessus d'une section sombre.
+     `mix-blend-mode` ne peut pas servir ici — `position: fixed` crée un contexte
+     d'empilement, donc le logo ne fusionnerait qu'avec la barre (transparente)
+     et resterait blanc sur les sections claires. On pilote donc les couleurs
+     à la main, via data-tone sur les sections (voir site.js).
+     Valeurs en dur et non `var(--ink)` / `var(--paper)` : ces deux-là changent de
+     sens d'une section à l'autre, alors que la barre doit choisir son camp
+     elle-même, à l'inverse de la section qui passe dessous. */
+  --nav-fg: rgba(237,242,255,0.78);   /* glyphe de la pastille */
+  --nav-text: #EDF2FF;                /* logo YLB : suit la couleur du texte de la section */
+  --nav-icon: rgba(237,242,255,0.88); /* icônes de réseaux */
+  --nav-btn: rgba(237,242,255,0.10);
+  --nav-btn-hover: rgba(237,242,255,0.18);
+  --nav-br: rgba(237,242,255,0.26);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  pointer-events: none;
+}
+.site-header > * { pointer-events: auto; }
+/* au-dessus d'une section claire */
+.site-header.on-light {
+  --nav-fg: #4A5A75;
+  --nav-text: #0A101C;
+  --nav-icon: #3A475C;             /* un peu plus foncé que la pastille, à la demande */
+  --nav-btn: #FFFFFF;
+  --nav-btn-hover: rgba(10,16,28,0.06);
+  --nav-br: rgba(10,16,28,0.18);
+}
+.nav-logo {
+  position: relative;
+  z-index: 961;
+  height: 56px;
+  display: flex;
+  align-items: center;
+  font-family: var(--font-display);
+  font-weight: 800;
+  font-size: 1.15rem;
+  letter-spacing: 0.02em;
+  /* couleur du texte de la section survolée : sombre sur les sections claires,
+     clair ailleurs. Pas le gris de la capsule. */
+  color: var(--nav-text);
+  transition: color 0.3s ease, opacity 0.3s ease;
+}
+
+/* --- LA CAPSULE-PANNEAU ----------------------------------------------------
+   Un seul et même objet : capsule fermée, panneau ouvert. Il grandit, il n'est
+   jamais remplacé. **Ne pas le redécouper en une pastille + un panneau qui se
+   croisent en fondu** : c'est ce qu'il y avait avant, et l'utilisateur a signalé
+   qu'on avait l'impression de changer de menu au lieu de le voir s'ouvrir.
+
+   Calé au milieu de l'ÉCRAN et non entre le logo et le reste : en position
+   absolue, il ne se décale pas quand ce qui l'entoure change de largeur.
+   Le conteneur ne capte aucun clic, seule la capsule le fait. */
+.nav-center {
+  position: absolute;
+  top: 1.1rem;                /* la même ligne que le logo */
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 961;
+  pointer-events: none;
+}
+
+.menu-shell {
+  pointer-events: auto;
+  position: relative;
+  /* Fermée, sa largeur est celle de l'en-tête seul : c'est pour ça que .menu-nav
+     est hors du flux. Ouverte, site.js anime largeur, hauteur et arrondi. */
+  width: max-content;
+  height: 56px;
+  border-radius: 100px;
+  /* indispensable : c'est lui qui rogne le menu tant que la capsule est petite */
+  overflow: hidden;
+  background: var(--nav-btn);
+  border: 1px solid var(--nav-br);
+  box-shadow: 0 8px 24px rgba(3,6,13,0.10);
+  /* AUCUNE transition de couleur ici, volontairement : elle n'existe qu'à
+     l'ouverture (voir .is-open juste en dessous). Le retour à la capsule est donc
+     instantané — avec une transition, on voyait le panneau virer au blanc en se
+     refermant au-dessus des sections claires, ce que l'utilisateur ne veut pas. */
+}
+.menu-shell:hover { background: var(--nav-btn-hover); }
+
+/* Ouverte, la capsule prend la peau du panneau. Le changement de couleur se fait
+   pendant l'agrandissement : choix de l'utilisateur, qui tient à ce que la
+   capsule garde son apparence habituelle (translucide, inversée sur les sections
+   claires) tant qu'elle est fermée. Il n'y a plus de voile derrière — d'où
+   l'ombre nettement plus marquée, seule chose qui détache le panneau de la page. */
+.menu-shell.is-open {
+  background: var(--paper-dim);
+  border-color: rgba(237,242,255,0.12);
+  box-shadow: 0 30px 80px rgba(3,6,13,0.6), 0 6px 16px rgba(3,6,13,0.4);
+  /* la teinte se pose pendant l'agrandissement ; au retour elle saute, puisque
+     cette transition disparaît avec la classe */
+  transition: background 0.8s ease, border-color 0.8s ease, box-shadow 0.8s ease;
+}
+.menu-shell.is-open:hover { background: var(--paper-dim); }
+
+.menu-head {
+  height: 56px;
+  display: flex;
+  align-items: center;
+  /* centré, et NON `space-between` : les deux libellés gardent leur écart quand
+     le cadre s'élargit, au lieu de s'écarter vers les bords. Demande de
+     l'utilisateur — rien ne doit bouger à l'intérieur, seul le cadre grandit. */
+  justify-content: center;
+  gap: 1.15rem;
+  padding: 0 1.2rem;
+}
+.pill-menu {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.6rem;
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: 0.95rem;
+  color: var(--nav-text);
+  transition: color 0.5s ease;
+}
+/* le glyphe à quatre carrés, qui pivote au survol */
+.pill-dots {
+  display: grid;
+  grid-template-columns: repeat(2, 5px);
+  gap: 3px;
+  color: var(--nav-fg);
+  transition: transform 0.45s cubic-bezier(.16,.8,.24,1), color 0.5s ease;
+}
+.pill-dots i { width: 5px; height: 5px; border-radius: 1.5px; background: currentColor; }
+.menu-shell:hover .pill-dots { transform: rotate(90deg); }
+.menu-shell.is-open .pill-dots { transform: rotate(45deg); }
+
+.pill-cv {
+  font-size: 0.9rem;
+  font-weight: 500;
+  color: var(--nav-fg);
+  transition: color 0.3s ease;
+}
+.pill-cv:hover { color: var(--nav-text); }
+/* Sur la surface sombre du panneau ouvert, les couleurs de la barre (qui suivent
+   la section survolée) ne valent plus rien : on repasse aux couleurs du thème. */
+.menu-shell.is-open .pill-menu,
+.menu-shell.is-open .pill-dots,
+.menu-shell.is-open .pill-cv:hover { color: var(--ink); }
+.menu-shell.is-open .pill-cv { color: var(--ash); }
+
+/* Le libellé du CV se raccourcit sur petit écran au lieu de disparaître : il est
+   désormais le seul chemin vers le CV, le bouton de l'accueil ayant été retiré. */
+.cv-short { display: none; }
+
+/* --- Le menu proprement dit ------------------------------------------------
+   Hors du flux : sans ça, sa largeur imposerait celle de la capsule fermée.
+   `visibility` plutôt qu'un simple masquage visuel : elle le sort aussi de
+   l'ordre de tabulation tant que le menu est fermé. */
+.menu-nav {
+  position: absolute;
+  top: 56px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: min(520px, 86vw);
+  visibility: hidden;
+  border-top: 1px solid rgba(237,242,255,0.09);
+}
+.menu-shell.is-showing .menu-nav { visibility: visible; }
+
+.menu-list { display: flex; flex-direction: column; }
+.menu-list li + li { border-top: 1px solid rgba(237,242,255,0.09); }
+.menu-link {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  min-height: 104px;
+  padding: 0.85rem 1.2rem;
+  color: var(--ink);
+  transition: background 0.3s ease;
+}
+.menu-link:hover { background: rgba(237,242,255,0.05); }
+.menu-text { display: block; min-width: 0; }
+.menu-num {
+  display: block;
+  margin-bottom: 0.35rem;
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.14em;
+  color: var(--ash);
+  transition: color 0.35s ease;
+}
+.menu-link.is-active .menu-num,
+.menu-link[aria-current="page"] .menu-num { color: var(--blue-light); }
+.menu-link.is-active .menu-num::after,
+.menu-link[aria-current="page"] .menu-num::after {
+  content: '';
+  display: inline-block;
+  width: 0.5em; height: 0.5em;
+  margin-left: 0.5em;
+  border-radius: 50%;
+  background: var(--blue-light);
+  vertical-align: middle;
+}
+.menu-label {
+  display: block;
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: clamp(1.5rem, 5.5vw, 2rem);
+  line-height: 1.05;
+  transition: transform 0.5s cubic-bezier(.16,.8,.24,1);
+}
+.menu-link:hover .menu-label, .menu-link:focus-visible .menu-label { transform: translateX(0.18em); }
+
+/* Vignette de droite : une vraie image quand elle existe, sinon le même motif
+   graphique que les cartes de projets (classes .art-*), jamais un trou blanc. */
+.menu-thumb {
+  position: relative;
+  flex: none;
+  width: 84px; height: 84px;
+  border-radius: 18px;
+  overflow: hidden;
+  background: var(--ink-2);
+  transition: transform 0.5s cubic-bezier(.16,.8,.24,1);
+}
+.menu-link:hover .menu-thumb { transform: scale(1.06) rotate(-2.5deg); }
+.menu-thumb img { width: 100%; height: 100%; object-fit: cover; }
+.menu-mark {
+  position: absolute;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  font-family: var(--font-display);
+  font-weight: 800;
+  font-size: 1.5rem;
+  color: rgba(237,242,255,0.92);
+}
+
+/* Réseaux en bas du panneau, comme une signature. La lueur violette rappelle
+   le fond de la section contact. */
+.menu-social { position: relative; padding: 1.15rem 1.2rem 1.35rem; }
+.menu-social::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(120% 150% at 50% 150%, rgba(42,98,240,0.6), transparent 62%);
+  pointer-events: none;
+}
+.menu-social > * { position: relative; }
+.menu-social-label {
+  display: block;
+  margin-bottom: 0.5rem;
+  font-size: 0.72rem;
+  font-weight: 600;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--ash);
+}
+.menu-social ul { display: flex; flex-direction: column; align-items: flex-start; gap: 0.15rem; }
+.menu-social a {
+  display: inline-block;
+  padding: 0.12rem 0;
+  font-size: 1.02rem;
+  color: rgba(237,242,255,0.88);
+  transition: color 0.25s ease, transform 0.35s cubic-bezier(.16,.8,.24,1);
+}
+.menu-social a:hover { color: var(--ink); transform: translateX(5px); }
+/* url encore à renseigner : lien inerte, comme les icônes du haut */
+.menu-social a.is-todo { color: var(--ash); cursor: default; }
+.menu-social a.is-todo:hover { transform: none; }
+
+/* ============================= BUTTONS ============================= */
+.btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.6rem;
+  padding: 0.95rem 1.8rem;
+  border-radius: 100px;
+  font-weight: 600;
+  font-size: 0.98rem;
+  /* Survol : ni déplacement ni ombre, seulement une teinte un peu plus sombre
+     (demande de l'utilisateur). Vaut pour tout ce qui a l'air d'un bouton. */
+  transition: background 0.25s ease, color 0.25s ease, border-color 0.25s ease;
+}
+.btn-primary {
+  background: var(--blue);
+  color: var(--white);
+}
+.btn-primary:hover { background: var(--blue-deep); }
+/* Le bleu ne reste que sur le CTA principal (bouton CV) : celui-ci reste neutre,
+   fond transparent, texte et contour gris — pour ne pas lui faire concurrence. */
+.btn-outline {
+  border: 1.5px solid var(--muted-line);
+  color: var(--muted);
+}
+.btn-outline:hover { background: var(--muted-tint); border-color: var(--muted-deep); color: var(--muted-deep); }
+
+/* ============================= HERO ============================= */
+.hero {
+  position: relative;
+  min-height: 100svh;
+  /* le noir de la page, plus le léger fondu bleu de .hero-noise juste en dessous */
+  background: var(--paper);
+  color: var(--ink);
+  display: flex;
+  align-items: stretch;
+  overflow: hidden;
+  padding: 9rem 0 0;
+  scroll-margin-top: 0;
+}
+/* Le « léger fondu bleu » demandé : deux halos très diffus sur le noir, qui
+   évitent l'aplat plat sans devenir un dégradé franc. Même idée sur #phares et
+   sur la liste de projets, en un seul halo — ailleurs, le noir reste uni. */
+.hero-noise {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background: radial-gradient(circle at 16% 10%, rgba(42,98,240,0.26), transparent 46%),
+              radial-gradient(circle at 84% 64%, rgba(42,98,240,0.16), transparent 44%);
+  /* Le halo doit s'éteindre AVANT le bas de la section. `.hero` étant en
+     `overflow: hidden`, tout ce qui dépasse était tranché net au ras du bord, et
+     on voyait une ligne horizontale entre l'accueil et la bande des compétences —
+     signalé par l'utilisateur. Le masque le fait mourir en douceur ; le second
+     halo a été remonté de 82 % à 64 % pour qu'il ait la place de s'éteindre.
+     Même précaution à prendre pour tout halo ajouté au bas d'une section. */
+  -webkit-mask-image: linear-gradient(to bottom, #000 45%, transparent 97%);
+  mask-image: linear-gradient(to bottom, #000 45%, transparent 97%);
+}
+/* Pictogrammes MMI flottants, inspirés de la composition fournie sans reprendre
+   ses symboles. Ils restent très effacés : ce sont des points de rythme autour
+   du contenu, jamais une seconde couche d'information à lire. */
+.hero-floaters {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  overflow: hidden;
+  pointer-events: none;
+}
+.hero-floater {
+  --float-x: 7px;
+  --float-y: -13px;
+  --float-r: 4deg;
+  position: absolute;
+  width: clamp(42px, 5.4vw, 78px);
+  aspect-ratio: 1;
+  color: var(--blue-light);
+  opacity: 0.09;
+  animation: heroFloat var(--float-duration, 8s) ease-in-out var(--float-delay, 0s) infinite alternate;
+  will-change: transform;
+}
+.hero-floater svg {
+  width: 100%;
+  height: 100%;
+  overflow: visible;
+}
+.hero-floater path,
+.hero-floater circle,
+.hero-floater rect {
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 4;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  vector-effect: non-scaling-stroke;
+}
+
+.hf-bezier    { left: 15%; top: 24%; --float-duration: 9.5s; --float-delay: -2s;  --float-r: -6deg; }
+.hf-wave      { left: 20%; top: 69%; --float-duration: 7.5s; --float-delay: -5s;  --float-x: -8px; --float-r: -5deg; }
+.hf-layers    { left: 31%; top: 10%; --float-duration: 10s;  --float-delay: -7s;  --float-r: 7deg; }
+.hf-terminal  { left: 32%; top: 76%; --float-duration: 8.5s; --float-delay: -1s;  --float-y: -9px; --float-r: 3deg; }
+.hf-cube      { right: 31%; top: 9%; --float-duration: 9s;   --float-delay: -4s;  --float-r: -5deg; }
+.hf-timeline  { right: 30%; top: 74%; --float-duration: 11s; --float-delay: -8s; --float-x: -6px; --float-r: -3deg; }
+.hf-type      { right: 18%; top: 22%; --float-duration: 8s;  --float-delay: -6s;  --float-r: 6deg; }
+.hf-keyframes { right: 15%; top: 55%; --float-duration: 10.5s; --float-delay: -3s; --float-y: 10px; --float-r: 5deg; }
+.hf-crop      { left: 16%; top: 48%; --float-duration: 9s;   --float-delay: -6s;  --float-r: -7deg; }
+
+@keyframes heroFloat {
+  from { transform: translate3d(0, 0, 0) rotate(calc(var(--float-r) * -0.55)); }
+  to   { transform: translate3d(var(--float-x), var(--float-y), 0) rotate(var(--float-r)); }
+}
+.hero-inner {
+  position: relative;
+  z-index: 2;
+  width: 100%;
+  max-width: var(--maxw);
+  margin: 0 auto;
+  padding: 0 var(--edge);
+  display: grid;
+  min-height: calc(100svh - 9rem);
+  grid-template-columns: minmax(0, 1.25fr) minmax(320px, 0.75fr);
+  grid-template-rows: auto;
+  align-items: end;
+  gap: 1rem clamp(2rem, 6vw, 5.5rem);
+  text-align: left;
+}
+.hero-wordmark {
+  position: absolute;
+  z-index: 0;
+  left: -0.035em;
+  bottom: -0.24em;
+  font-family: var(--font-display);
+  font-size: clamp(12rem, 29vw, 34rem);
+  font-weight: 900;
+  line-height: 1;
+  letter-spacing: -0.1em;
+  color: transparent;
+  -webkit-text-stroke: 1px rgba(185,210,255,0.09);
+  pointer-events: none;
+  user-select: none;
+}
+.hero-copy { position: relative; z-index: 3; grid-row: auto; align-self: center; padding-bottom: clamp(3rem, 8vh, 7rem); }
+.hero-kicker { color: var(--blue-light); animation: fadeUp 0.8s cubic-bezier(.16,.8,.24,1) both; }
+.hero-avatar {
+  position: relative;
+  z-index: 1;
+  align-self: end;
+  justify-self: end;
+  width: min(42vw, 460px);
+  height: clamp(390px, 70svh, 620px);
+  overflow: visible;
+  margin: 0;
+  isolation: isolate;
+  animation: fadeUp 0.9s cubic-bezier(.16,.8,.24,1) both;
+}
+.hero-avatar img {
+  position: absolute;
+  left: 50%;
+  bottom: 0;
+  width: auto;
+  height: 100%;
+  max-width: none;
+  object-fit: contain;
+  display: block;
+}
+.hero-avatar-photo {
+  z-index: 3;
+  transform: translateX(-44%);
+  filter: drop-shadow(0 18px 18px rgba(3,6,13,0.2));
+  -webkit-mask-image: linear-gradient(to bottom, #000 71%, transparent 91%);
+  mask-image: linear-gradient(to bottom, #000 71%, transparent 91%);
+}
+.hero-avatar-blur {
+  z-index: 2;
+  transform: translateX(-44%);
+  filter: blur(18px);
+  -webkit-mask-image: linear-gradient(to bottom, transparent 65%, #000 78%, #000 85%, transparent 100%);
+  mask-image: linear-gradient(to bottom, transparent 65%, #000 78%, #000 85%, transparent 100%);
+}
+.hero-avatar-echo {
+  z-index: 1;
+  opacity: 0.72;
+  transform: translate(calc(-44% + 14px), 10px);
+  filter: brightness(0) saturate(100%) invert(36%) sepia(92%) saturate(2600%) hue-rotate(216deg) brightness(96%) contrast(94%);
+  -webkit-mask-image: linear-gradient(to bottom, #000 55%, transparent 77%);
+  mask-image: linear-gradient(to bottom, #000 55%, transparent 77%);
+}
+.hero-title {
+  font-family: var(--font-display);
+  font-weight: 800;
+  max-width: none;
+  font-size: clamp(2.8rem, 5.35vw, 4.75rem);
+  line-height: 1.04;
+  letter-spacing: -0.055em;
+  text-wrap: balance;
+}
+/* pas de masque de découpe ici : il rognerait les fonds des mots surlignés */
+.hero-title .line { display: block; }
+.hero-title .line > .line-inner { display: block; animation: fadeUp 0.9s cubic-bezier(.16,.8,.24,1) both; animation-delay: var(--rd, 0.1s); }
+.hero-mobile-break { display: none; }
+.hero-type-line { min-height: 1.08em; }
+.hero-title .hero-type-wrap {
+  display: flex;
+  align-items: center;
+  width: max-content;
+  min-width: 11.8ch;
+  color: var(--blue-light);
+  white-space: nowrap;
+}
+.hero-type-cursor {
+  width: 0.09em;
+  height: 0.82em;
+  margin-left: 0.12em;
+  background: currentColor;
+  animation: typeCursor 0.8s steps(1) infinite;
+}
+@keyframes typeCursor { 50% { opacity: 0; } }
+/* mots mis en avant, comme dans la référence */
+.hl {
+  font-style: normal;
+  padding: 0.04em 0.28em;
+  border-radius: 10px;
+  /* le fond suit le texte quand il passe à la ligne */
+  -webkit-box-decoration-break: clone;
+  box-decoration-break: clone;
+}
+/* contraste maximal : bleu plein, et un cadre bleu épais pour le second mot.
+   Le second passe en --blue-light : le bleu plein ne tient pas 4,5:1 sur le noir. */
+.hl-solid { background: var(--blue); color: var(--white); font-weight: 900; }
+.hl-soft { background: transparent; color: var(--blue-light); font-weight: 900; box-shadow: inset 0 0 0 2.5px var(--blue-light); }
+.hero-tagline {
+  margin-top: clamp(1.2rem, 2.5vw, 1.8rem);
+  max-width: 50ch;
+  font-size: clamp(1rem, 1.5vw, 1.15rem);
+  line-height: 1.65;
+  color: var(--ash-dark);
+  animation: fadeUp 0.9s cubic-bezier(.16,.8,.24,1) 0.45s both;
+}
+/* mots-clés en gras, comme dans la référence */
+.hero-tagline b { font-weight: 800; color: var(--blue-light); }
+@keyframes fadeUp { from { opacity: 0; transform: translateY(16px);} to { opacity: 1; transform: translateY(0);} }
+.hero-actions {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: flex-start;
+  gap: 0.9rem;
+  margin-top: clamp(1.8rem, 3.5vw, 2.6rem);
+  animation: fadeUp 0.9s cubic-bezier(.16,.8,.24,1) 0.6s both;
+}
+.hero-actions .btn { gap: 1.6rem; }
+.hero-disciplines {
+  align-self: start;
+  justify-self: end;
+  width: min(100%, 340px);
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.45rem;
+  animation: fadeUp 0.9s cubic-bezier(.16,.8,.24,1) 0.35s both;
+}
+.hero-disciplines li {
+  padding: 0.42rem 0.78rem;
+  border: 1px solid var(--line-dark);
+  border-radius: 100px;
+  color: var(--ash);
+  font-size: 0.75rem;
+  font-weight: 600;
+}
+@media (max-width: 880px) {
+  .hero { min-height: auto; padding: 7rem 0 0; }
+  .hero-inner {
+    min-height: 0;
+    grid-template-columns: 1fr;
+    grid-template-rows: auto;
+    align-items: start;
+    gap: 1.25rem;
+  }
+  .hero-copy { grid-row: auto; padding-bottom: 0; }
+  .hero-title { max-width: 100%; font-size: clamp(2.1rem, 9.5vw, 2.85rem); line-height: 1.05; }
+  .hero-title .hero-type-wrap { min-width: 0; }
+  .hero-tagline { max-width: 34ch; }
+  .hero-avatar {
+    justify-self: stretch;
+    width: 100%;
+    height: clamp(360px, 112vw, 500px);
+    margin: 0.5rem 0 0;
+  }
+  .hero-avatar-echo { transform: translate(calc(-44% + 9px), 7px); }
+  .hero-disciplines { justify-self: center; justify-content: center; width: 100%; }
+  .hero-wordmark { bottom: 0; font-size: 48vw; }
+}
+.hero-place {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  margin-top: clamp(1.6rem, 3vw, 2.4rem);
+  font-size: 0.9rem;
+  color: var(--ash-dark);
+  animation: fadeUp 0.9s cubic-bezier(.16,.8,.24,1) 0.75s both;
+}
+.hero-place .dot {
+  width: 8px; height: 8px; border-radius: 50%;
+  background: var(--blue-light);
+  box-shadow: 0 0 0 4px rgba(42,98,240,0.28);
+}
+
+/* ============================= SECTION HEADINGS ============================= */
+.section-head {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 2rem;
+  flex-wrap: wrap;
+  margin-bottom: var(--heading-space);
+}
+.section-title, .edu-heading {
+  font-family: var(--font-display);
+  font-weight: 800;
+  font-size: var(--title-size);
+  line-height: 1.12;
+  letter-spacing: -0.04em;
+  text-wrap: balance;
+}
+.title-accent { color: var(--accent-text); }
+.section-kicker {
+  display: flex;
+  align-items: center;
+  gap: 0.7rem;
+  margin-bottom: 1.2rem;
+  color: var(--ash-dark);
+  font-size: 0.72rem;
+  font-weight: 700;
+  line-height: 1.6;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+.section-kicker::before { content: ''; width: 1.6rem; height: 2px; flex-shrink: 0; background: var(--accent-text); }
+.section-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 1.2rem;
+  min-height: 44px;
+  font-size: 0.88rem;
+  font-weight: 600;
+  color: var(--muted);
+  transition: color 0.25s ease;
+}
+.section-link span { font-size: 1.5rem; }
+.section-link:hover { color: var(--ink); }
+.section-title .stroke {
+  -webkit-text-stroke: 1.5px currentColor;
+  color: transparent;
+}
+.section-note {
+  max-width: 34ch;
+  color: var(--ash-dark);
+  font-size: 1.02rem;
+}
+.dark .section-note { color: var(--ash); }
+
+/* En-tête éditorial commun aux blocs de profil : une ligne tendue, un petit
+   cartouche et une composition asymétrique. Il relie les sections sans leur
+   imposer exactement la même mise en page. */
+.creative-head {
+  position: relative;
+  display: grid;
+  grid-template-columns: minmax(0, 1.35fr) minmax(230px, 0.65fr);
+  grid-template-areas: "chip chip" "title note";
+  gap: 1.2rem clamp(2rem, 6vw, 6rem);
+  align-items: end;
+  padding-top: clamp(1.4rem, 2.5vw, 2rem);
+  border-top: 1px solid var(--line-dark);
+}
+.creative-head::after {
+  content: '+';
+  position: absolute;
+  top: -0.78rem;
+  right: 0;
+  width: 1.5rem;
+  height: 1.5rem;
+  display: grid;
+  place-items: center;
+  background: var(--paper);
+  color: var(--accent-text);
+  font-family: var(--font-display);
+  font-size: 1.05rem;
+  font-weight: 700;
+}
+.creative-chip {
+  grid-area: chip;
+  justify-self: start;
+  padding: 0.42rem 0.75rem;
+  border: 1px solid var(--line-dark);
+  border-radius: 100px;
+  color: var(--accent-text);
+  font-size: 0.68rem;
+  font-weight: 800;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+}
+.creative-head .section-title { grid-area: title; max-width: 13ch; }
+.creative-note {
+  grid-area: note;
+  max-width: 34ch;
+  padding-bottom: 0.35rem;
+  color: var(--ash-dark);
+  font-size: clamp(0.92rem, 1.25vw, 1.05rem);
+  line-height: 1.7;
+}
+
+/* ============================= ABOUT ============================= */
+.about {
+  position: relative;
+  background: var(--paper);
+  padding: 8rem 0;
+}
+.about::before {
+  content: '';
+  position: absolute;
+  inset: 0 0 auto;
+  height: 24rem;
+  opacity: 0.36;
+  pointer-events: none;
+  background-image: linear-gradient(var(--line-dark) 1px, transparent 1px), linear-gradient(90deg, var(--line-dark) 1px, transparent 1px);
+  background-size: 42px 42px;
+  -webkit-mask-image: linear-gradient(to bottom, #000, transparent);
+  mask-image: linear-gradient(to bottom, #000, transparent);
+}
+.about .section-inner { position: relative; }
+.about-head { margin-bottom: clamp(5rem, 9vw, 8rem); }
+@keyframes eq { 0%, 100% { height: 18%; } 50% { height: 90%; } }
+
+/* ============================= PROJECTS ============================= */
+/* Mode par défaut = scroll horizontal natif (mobile, sans GSAP, reduced-motion).
+   .pj-is-pinned est posé par GSAP en desktop : la section se fige et la piste est translatée. */
+.projects {
+  position: relative;
+  background: var(--paper-dim);
+  color: var(--ink);
+  overflow: hidden;
+  /* clip et non hidden : le focus clavier ne peut pas faire défiler la section épinglée */
+  overflow: clip;
+}
+.projects .section-note { color: var(--ash); }
+.pj-intro-title .line { display: block; overflow: hidden; padding-bottom: 0.06em; }
+.pj-intro-title .line > span { display: inline-block; }
+
+.pj-art { position: absolute; inset: 0; display: block; overflow: hidden; }
+.pj-art-layer { position: absolute; inset: 0 -18%; display: block; }
+.pj-mark {
+  position: absolute;
+  right: 7%;
+  bottom: 4%;
+  font-family: var(--font-display);
+  font-weight: 900;
+  font-size: clamp(5rem, 11vw, 11rem);
+  line-height: 0.8;
+  color: transparent;
+  -webkit-text-stroke: 1.5px rgba(246,247,249,0.4);
+  pointer-events: none;
+}
+.pj-glow {
+  position: absolute;
+  left: 0; top: 0;
+  width: 70%;
+  aspect-ratio: 1;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(185,210,255,0.32), transparent 62%);
+  opacity: 0;
+  pointer-events: none;
+}
+
+.art-video { background: linear-gradient(155deg, #2A62F0 0%, #16337E 55%, #070B14 100%); }
+.art-video .pj-art-layer { background: repeating-linear-gradient(115deg, rgba(185,210,255,0.14) 0 2px, transparent 2px 26px); }
+.art-motion { background: linear-gradient(160deg, #070B14 0%, #1B48C0 100%); }
+.art-motion .pj-art-layer { background: radial-gradient(circle, rgba(185,210,255,0.5) 0 2px, transparent 3px) 0 0/34px 34px; }
+.art-ml { background: linear-gradient(160deg, #0C1424 0%, #16337E 100%); }
+.art-ml .pj-art-layer {
+  background-image: linear-gradient(rgba(246,247,249,0.12) 1px, transparent 1px), linear-gradient(90deg, rgba(246,247,249,0.12) 1px, transparent 1px);
+  background-size: 30px 30px;
+}
+.art-mobility { background: linear-gradient(160deg, #1B48C0 0%, #5E9BFF 120%); }
+.art-mobility .pj-art-layer { background: repeating-linear-gradient(35deg, rgba(185,210,255,0.22) 0 3px, transparent 3px 34px); }
+.art-poster { background: linear-gradient(150deg, #16337E 0%, #8FB8FF 110%); }
+.art-poster .pj-art-layer { background: repeating-radial-gradient(circle at 30% 60%, rgba(246,247,249,0.16) 0 2px, transparent 2px 22px); }
+.art-web { background: linear-gradient(170deg, #050810 0%, #142033 100%); }
+.art-web .pj-art-layer { background: repeating-linear-gradient(180deg, rgba(185,210,255,0.16) 0 2px, transparent 2px 30px); }
+.pj-num { font-family: var(--font-display); font-weight: 700; font-size: 0.85rem; color: var(--ash); }
+.pj-tag {
+  display: inline-block;
+  font-size: 0.76rem;
+  font-weight: 600;
+  color: var(--black);
+  background: var(--blue-light);
+  padding: 0.32rem 0.7rem;
+  border-radius: 100px;
+}
+/* chaque mot masque ses lettres ; le padding négatif laisse la place aux accents et à la vague au survol */
+.pj-title .wd {
+  display: inline-block;
+  overflow: hidden;
+  white-space: nowrap;
+  vertical-align: top;
+  padding: 0.2em 0 0.06em;
+  margin: -0.2em 0 -0.06em;
+}
+.pj-title .ch { display: inline-block; }
+.pj-outro-big .stroke { -webkit-text-stroke: 1.5px currentColor; color: transparent; }
+
+/* ============================= SKILLS MARQUEE ============================= */
+.skills {
+  background: var(--paper);
+  padding: clamp(3.5rem, 6vw, 5rem) 0;
+  overflow: hidden;
+}
+/* Une seule bande : les domaines de la formation MMI, en grand. */
+.marquee {
+  display: flex;
+  overflow: hidden;
+  mask-image: linear-gradient(90deg, transparent, #000 6%, #000 94%, transparent);
+  -webkit-mask-image: linear-gradient(90deg, transparent, #000 6%, #000 94%, transparent);
+}
+.marquee-track {
+  display: flex;
+  align-items: center;
+  flex-shrink: 0;
+  gap: clamp(1.2rem, 2.3vw, 2.2rem);
+  padding-right: clamp(1.2rem, 2.3vw, 2.2rem);
+  /* repli sans GSAP ; avec GSAP, home.js coupe cette animation et pilote la vitesse */
+  animation: marquee 40s linear infinite;
+  will-change: transform;
+}
+/* Repli sans GSAP : on ralentit au survol au lieu d'arrêter (demande de
+   l'utilisateur), en allongeant la durée d'un tour — 40s à 160s, soit le quart de
+   la vitesse, la même valeur que la version GSAP. Changer `animation-duration`
+   en cours de route provoque un petit saut, que GSAP n'a pas ; c'est le prix du
+   repli, et ça ne se voit que si le CDN est bloqué. */
+.marquee:hover .marquee-track { animation-duration: 160s; }
+@keyframes marquee { to { transform: translateX(-50%); } }
+
+.mq-item {
+  font-family: var(--font-display);
+  font-weight: 800;
+  font-size: clamp(1.6rem, 4.4vw, 3.4rem);
+  line-height: 1.1;
+  letter-spacing: -0.02em;
+  text-transform: uppercase;
+  white-space: nowrap;
+  color: var(--ink);
+}
+.mq-sep {
+  width: clamp(15px, 1.9vw, 26px);
+  aspect-ratio: 1;
+  flex-shrink: 0;
+  fill: var(--blue-light);
+}
+
+/* Sans animation : la bande devient scrollable à la main */
+@media (prefers-reduced-motion: reduce) {
+  .marquee { overflow-x: auto; scrollbar-width: none; }
+  .marquee::-webkit-scrollbar { display: none; }
+  .marquee-track { animation: none; }
+}
+
+/* ============================= EXPÉRIENCE ============================= */
+.xp {
+  background: var(--paper);
+  color: var(--ink);
+  padding: var(--section-space) 0;
+}
+.xp-head { display: block; margin-bottom: clamp(2rem, 4vw, 3rem); }
+.xp-creative-head { width: 100%; }
+
+/* ============================= CONTACT ============================= */
+/* Bloc de fin de page : noir comme le reste, mais avec un fondu bleu qui monte
+   du bas — demande de l'utilisateur, qui a remplacé l'aplat bleu foncé d'avant.
+   Le halo est ancré sur le bord BAS de la section et repris en haut du pied de
+   page : les deux se rejoignent et ne font qu'une seule lueur, à la couture. */
+.contact {
+  background: radial-gradient(95% 75% at 50% 100%, rgba(42,98,240,0.30), transparent 68%), var(--paper);
+  color: var(--ink);
+  padding: 9rem 0 3.5rem;
+}
+.contact-inner {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+}
+/* Le titre de section joue ici le rôle de sur-titre discret : c'est l'adresse
+   mail, juste en dessous, qui porte le regard. */
+.contact-title {
+  font-family: var(--font-body);
+  font-weight: 700;
+  font-size: 0.82rem;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: var(--ink);
+}
+.contact-mail {
+  margin-top: clamp(2.5rem, 6vw, 4rem);
+  width: 100%;
+  padding: clamp(1.8rem, 5vw, 3.4rem) clamp(1rem, 3vw, 2.5rem);
+  /* un peu plus marqué qu'avant : le pointillé est redevenu le seul contour du
+     bloc depuis que son aplat blanc est parti */
+  border: 1.5px dashed rgba(237, 242, 255, 0.45);
+  border-radius: 28px;
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: clamp(0.8rem, 2.8vw, 2.6rem);
+  line-height: 1.15;
+  white-space: nowrap;
+  letter-spacing: -0.015em;
+  text-transform: uppercase;
+  /* Le cadre en pointillés reprend la main : l'aplat blanc qui le remplissait
+     avait été fait pour le fond bleu foncé, il ferait une dalle blanche sur le
+     noir. Fond transparent, texte clair, le pointillé redevient visible. */
+  color: var(--ink);
+  background: transparent;
+  transition: background 0.25s ease;
+}
+.contact-mail:hover,
+.contact-mail:focus-visible { background: var(--paper-dim); }
+.contact-avail {
+  margin-top: clamp(2rem, 4vw, 3rem);
+  display: flex;
+  align-items: center;
+  gap: 0.7rem;
+  color: var(--blue-light);
+  font-size: 0.95rem;
+}
+.contact-avail .dot {
+  width: 8px; height: 8px; border-radius: 50%;
+  background: var(--blue-light);
+  box-shadow: 0 0 0 4px rgba(42,98,240,0.28);
+}
+
+/* ============================= FOOTER ============================= */
+/* Trois zones : mention à gauche, pastilles au centre, école à droite.
+   Il prolonge le fondu de #contact : même halo, ancré cette fois sur son bord
+   haut, pour que la lueur passe d'un élément à l'autre sans couture visible.
+   Le rayon horizontal (95%) et l'alpha (0.30) doivent être IDENTIQUES à ceux
+   de .contact : les deux dégradés sont centrés pile sur la ligne de couture,
+   donc la couleur y est la même des deux côtés seulement si ces deux valeurs
+   matchent — sinon on voit une barre nette au raccord (ex. 75%/0.20 contre
+   95%/0.30). Le rayon vertical, lui, peut différer : il règle juste la vitesse
+   du fondu vers le bas, propre à chaque section. */
+.site-footer {
+  background: radial-gradient(95% 130% at 50% 0%, rgba(42,98,240,0.30), transparent 68%), var(--paper);
+  color: var(--blue-light);
+  padding: 2rem var(--edge) 2.6rem;
+  display: grid;
+  grid-template-columns: 1fr auto 1fr;
+  align-items: center;
+  gap: 1.6rem;
+  font-size: 0.76rem;
+  font-weight: 700;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+}
+.foot-end { justify-self: end; text-align: right; }
+.foot-links {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 0.7rem;
+  list-style: none;
+}
+.foot-links a {
+  display: inline-block;
+  padding: 0.62rem 1.25rem;
+  border: 1.5px solid var(--muted-line);
+  border-radius: 100px;
+  color: var(--ink);
+  white-space: nowrap;
+  transition: background 0.25s ease;
+}
+.foot-links a:hover { background: var(--muted-tint); }
+
+/* ============================= PROJECT DETAIL ============================= */
+html.is-locked { overflow: hidden; }
+/* Le logo ne s'efface QUE sur écran étroit, là où le panneau ouvert arrive
+   jusqu'à son bord et passerait sous lui. Au-dessus, le panneau fait 520px au
+   centre : il ne le touche pas, et le faire disparaître était une régression
+   héritée de l'époque où le menu couvrait tout l'écran. */
+@media (max-width: 700px) {
+  html.is-locked .nav-logo { opacity: 0; pointer-events: none; }
+}
+/* feuille de base recommandée par Lenis pour le défilement fluide */
+html.lenis, html.lenis body { height: auto; }
+.lenis.lenis-smooth { scroll-behavior: auto !important; }
+.lenis.lenis-stopped { overflow: hidden; }
+.pj-detail-media .pj-mark { font-size: clamp(8rem, 22vw, 22rem); }
+/* margin auto plutôt que justify-content: center, qui couperait le haut du contenu en cas de débordement */
+.pj-detail-content { margin-block: auto; }
+.pj-detail-content .meta { font-size: 0.92rem; color: var(--ash); margin-bottom: 1.8rem; }
+.pj-detail-content .desc { font-size: 1.05rem; line-height: 1.7; color: var(--ash); max-width: 56ch; margin-bottom: 2rem; }
+.pj-detail-next .arr {
+  flex-shrink: 0;
+  width: 54px; height: 54px;
+  border-radius: 50%;
+  background: var(--blue-light);
+  color: var(--black);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.2rem;
+  transition: transform 0.35s cubic-bezier(.16,.8,.24,1);
+}
+.pj-detail-next:hover .arr { transform: translateX(6px); }
+
+/* ============================= RÉSEAUX ============================= */
+/* Les icônes rondes en haut à droite ont été retirées à la demande de
+   l'utilisateur : la barre ne contient plus que le logo et la pastille « Menu ».
+   Les réseaux restent au bas du panneau de menu (.menu-social) et dans le pied
+   de page (.foot-links), tous deux alimentés par le même tableau `socials`.
+   `--nav-icon` n'a donc plus d'usage, mais reste défini avec les autres
+   variables de la barre au cas où le bloc reviendrait. */
+
+/* ============================= PROJETS PHARES — ÉVENTAIL (accueil) ============================= */
+.fan {
+  /* noir uni, sans halo : demande explicite de l'utilisateur pour cette section.
+     Ne pas y remettre de dégradé — les projets phares restent en noir plat. */
+  background: var(--paper);
+  color: var(--ink);
+  /* Un peu plus d'air après la bande de compétences : les cartes et le début de
+     la partie blanche descendent ensemble. */
+  padding: var(--section-space) 0 clamp(7rem, 12vw, 11rem);
+  /* les cartes se décalent latéralement à l'entrée : on évite une barre horizontale */
+  overflow: clip;
+}
+.fan-inner { width: 100%; }
+.fan-head { margin-bottom: var(--heading-space); }
+.fan-deck {
+  /* indispensable : les cartes mesurent leur offsetLeft par rapport à ce bloc.
+     Sans position, la mesure part de <body> et l'empilement rate le centre. */
+  position: relative;
+  /* flex plutôt que grid, hérité d'une version où la carte phare était plus
+     large que les deux autres (retiré depuis, les trois font la même taille) ;
+     avec `.fan-card { flex: 1 1 0 }` ça revient au même que trois colonnes égales. */
+  display: flex;
+  gap: clamp(0.8rem, 1.8vw, 1.5rem);
+  align-items: stretch;
+}
+.fan-card {
+  flex: 1 1 0;
+  min-width: 0;
+  border-radius: var(--radius-card);
+  box-shadow: 10px 10px 0 rgba(42,98,240,0.28);
+}
+/* Le projet mis en avant : un lavis bleu et un filet de la même teinte, à taille
+   égale avec les deux autres — une première version l'élargissait aussi, mais
+   l'utilisateur voulait les trois cartes à la même taille. Ne pas remettre de
+   `flex` différent ici. PAS de `transform` non plus : GSAP anime l'échelle des
+   cartes à l'entrée et écraserait toute mise à l'échelle posée en CSS. */
+.fan-card.is-lead .fan-link {
+  background: linear-gradient(160deg, rgba(42,98,240,0.18), transparent 58%), var(--paper-dim);
+  border-color: rgba(42,98,240,0.45);
+}
+.fan-card.is-lead .fan-link:hover {
+  background: linear-gradient(160deg, rgba(42,98,240,0.24), transparent 58%), var(--ink-3);
+}
+/* Cartes posées sur le noir : une surface d'un cran au-dessus (--paper-dim) plus
+   un filet, sinon elles se fondraient dans la page.
+   Les parties .pc-* sont partagées avec la liste de projets.html et la page projet. */
+.fan-card { position: relative; display: flex; will-change: transform; }
+.fan-link {
+  position: relative;
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  border: 1px solid var(--line-dark);
+  border-radius: var(--radius-card);
+  padding: 0.65rem;
+  overflow: hidden;
+  background: var(--paper-dim);
+  color: var(--ink);
+  /* Safari découpe mal les coins arrondis pendant la rotation de l'éventail */
+  -webkit-mask-image: -webkit-radial-gradient(white, black);
+  transition: background 0.25s ease;
+}
+/* survol : teinte un cran au-dessus, sans mouvement (règle commune aux boutons) */
+.fan-link:hover, .fan-link:focus-visible { background: var(--ink-3); }
+.pc-media {
+  position: relative;
+  display: block;
+  aspect-ratio: 16 / 9;
+  overflow: hidden;
+  background: var(--ink-2);
+  border-radius: var(--radius-media);
+}
+.pc-media img { width: 100%; height: 100%; object-fit: cover; display: block; }
+.pc-index {
+  position: absolute;
+  top: 0.8rem;
+  left: 0.8rem;
+  display: grid;
+  place-items: center;
+  width: 2.4rem;
+  height: 2.4rem;
+  border: 1px solid var(--muted-line);
+  border-radius: 50%;
+  background: var(--black);
+  color: var(--white);
+  font-family: var(--font-display);
+  font-size: 0.7rem;
+  font-weight: 700;
+}
+.fan-info { display: flex; flex: 1; flex-direction: column; padding: 1.2rem 0.65rem 0.35rem; }
+.pc-top { display: flex; flex-direction: column; align-items: flex-start; gap: 0.25rem; margin-bottom: 1rem; min-width: 0; }
+.pc-logo {
+  flex-shrink: 0;
+  display: grid;
+  place-items: center;
+  width: 30px; height: 30px;
+  border-radius: 8px;
+  overflow: hidden;
+  background: var(--blue);
+  color: var(--white);
+  font-family: var(--font-display);
+  font-size: 0.62rem;
+  font-weight: 800;
+}
+.pc-logo img { width: 100%; height: 100%; object-fit: cover; display: block; }
+.pc-name { font-weight: 700; font-size: 0.88rem; }
+/* Métadonnées sur deux lignes, lisibles en entier même dans l'éventail. */
+.pc-kind {
+  color: var(--ash-dark);
+  font-size: 0.78rem;
+}
+.pc-title {
+  display: block;
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: clamp(1.05rem, 1.5vw, 1.25rem);
+  line-height: 1.4;
+  letter-spacing: -0.03em;
+}
+.pc-disc { display: block; margin-top: 0.75rem; color: var(--ash-dark); font-size: 0.92rem; }
+.pc-footer { display: flex; align-items: center; justify-content: space-between; gap: 0.7rem; margin-top: auto; padding-top: 1.5rem; }
+.pc-footer .pc-disc { margin: 0; font-size: 0.78rem; }
+.pc-arrow { display: grid; place-items: center; flex-shrink: 0; width: 2.4rem; height: 2.4rem; border: 1px solid var(--line-dark); border-radius: 50%; font-size: 1.2rem; }
+
+/* ============================= À PROPOS — LIGNES IMAGE + TEXTE ============================= */
+.ab-rows { display: flex; flex-direction: column; gap: clamp(3.5rem, 8vw, 7rem); margin-top: clamp(2.5rem, 5vw, 4rem); }
+.ab-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: clamp(2rem, 5vw, 4.5rem);
+  align-items: center;
+}
+/* une ligne sur deux inverse l'ordre : l'image passe à gauche */
+.ab-row:nth-child(even) .ab-shot { order: -1; }
+/* cadre façon tirage photo, comme la référence */
+.ab-shot {
+  margin: 0;
+  padding: 0.9rem 0.9rem 0;
+  border-radius: 20px;
+  background: var(--paper);
+  box-shadow: 0 24px 50px rgba(10,30,90,0.14);
+  will-change: transform;
+}
+.ab-frame {
+  position: relative;
+  display: block;
+  aspect-ratio: 4 / 3;
+  border-radius: 14px;
+  overflow: hidden;
+  background: var(--ink-2);
+  /* Safari découpe mal les coins arrondis pendant une transformation */
+  -webkit-mask-image: -webkit-radial-gradient(white, black);
+}
+.ab-frame img { width: 100%; height: 100%; object-fit: cover; display: block; }
+/* ------------------------------------------------------------------------
+   La carte est le FOND de tout le bloc « D'où je viens » : elle part du bord
+   gauche de l'écran et SORT à droite, la photo se pose en haut à gauche et le
+   récit en bas à gauche, par-dessus elle. Demande explicite de l'utilisateur,
+   référence à l'appui : ne pas la rendre « sage » (contenue dans la colonne,
+   texte en dessous) sans qu'on le redemande.
+   Le découpage ci-dessous est en deux temps : la mise en page empilée d'abord,
+   la superposition ensuite, dans une media query — voir plus bas pourquoi.
+------------------------------------------------------------------------ */
+.ab-row--map { display: block; position: relative; }
+.ab-map-scene {
+  position: relative;
+  /* Le rapport du cadrage, posé en style inline par home.js depuis `view`
+     (core.js). Il n'est écrit nulle part ailleurs : un recadrage de la carte
+     ne demande donc de toucher ni à cette feuille, ni au HTML. */
+  aspect-ratio: var(--map-ar, 847 / 430);
+  margin-inline: calc(var(--edge) * -1);
+}
+.ab-map-media {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  /* La carte est un ZOOM : elle est forcément coupée en haut (le Cotentin) et
+     en bas (la Vendée). Coupée net, ça donne un trait horizontal en plein
+     milieu du blanc, qui se lit comme un bug — l'utilisateur l'a signalé. On
+     la fond donc dans le fond de la section.
+     ⚠ Les bornes sont calées sur la Bretagne, qui occupe 10,7 % à 80,5 % de
+     la hauteur du cadre : le fondu s'arrête avant elle des deux côtés et ne
+     l'entame jamais. En recadrant la carte (`view` dans core.js), refaire ce
+     calcul. Le bord DROIT, lui, ne se fond pas : il coïncide avec le bord de
+     l'écran, donc rien ne s'y lit comme une coupe — c'est même tout l'effet.
+     Seule l'image porte le masque : repères, libellés et photo restent nets. */
+  --map-fade: linear-gradient(to bottom, transparent 0, #000 9%, #000 86%, transparent 100%);
+  -webkit-mask: var(--map-fade) center / 100% 100% no-repeat;
+  mask: var(--map-fade) center / 100% 100% no-repeat;
+}
+/* Le SVG de la carte ne porte QUE les contours. Le calque ci-dessous reprend sa
+   viewBox, donc son repère de coordonnées : un point écrit `[319, 212]` dans
+   core.js tombe sur Lannion des deux côtés. Et comme la scène a exactement le
+   rapport de la viewBox (760/480), `object-fit: contain` ne laisse aucune marge :
+   les libellés HTML peuvent se placer en % de cette même boîte.
+   ⚠ En changeant le rapport de `.ab-map-scene`, changer celui de la viewBox
+   avec, sinon repères et contours se décalent. */
+.ab-map-marks {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  overflow: visible;
+  pointer-events: none;
+}
+.mk-arrows {
+  fill: none;
+  stroke: var(--ink);
+  stroke-width: 3.6;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+.mk-halo { fill: var(--blue); opacity: 0.12; }
+.mk-dot { fill: var(--blue); stroke: var(--white); stroke-width: 5; }
+.mk-shadow { fill: var(--ink); opacity: 0.18; }
+.mk-body { fill: var(--pin); }
+.mk-eye { fill: var(--white); }
+/* Le libellé est du VRAI texte, pas un texte gravé dans le SVG : il est donc
+   dans la police du site, sélectionnable et lisible par un lecteur d'écran (le
+   calque des repères, lui, est `aria-hidden`). Il se centre sous la queue de sa
+   flèche — `--nx` / `--ny` sont posées en style inline par home.js, en % de la
+   boîte de la carte. */
+.ab-map-note {
+  position: absolute;
+  left: var(--nx, 50%);
+  top: var(--ny, 50%);
+  transform: translateX(-50%);
+  width: max-content;
+  max-width: 42%;
+  text-align: center;
+  line-height: 1.22;
+  /* En `vw` et non en `%` : le libellé doit garder la même taille RELATIVE à la
+     carte à toutes les largeurs, et la carte fait une largeur d'écran.
+     ⚠ Le plafond casse ce rapport au-delà de ~1970px : c'est assumé, sans lui
+     les libellés deviendraient énormes sur un très grand écran. */
+  font-size: clamp(0.9rem, 1.95vw, 2.4rem);
+}
+.ab-map-name { display: block; font-weight: 800; letter-spacing: -0.01em; color: var(--ink); }
+.ab-map-sub { display: block; margin-top: 0.12em; font-size: 0.82em; color: var(--ash-dark); }
+.ab-postcard {
+  position: absolute;
+  z-index: 1;
+  top: 15%;
+  /* À DROITE de la carte — demande de l'utilisateur, elle était à gauche avant. */
+  right: 1%;
+  /* Même logique que les libellés : une part constante de la carte, donc du `vw`
+     et non du `%`. Resserré depuis que la photo est un PORTRAIT : à 19vw, une
+     image deux fois plus haute que large mangeait la moitié de la carte. */
+  width: clamp(180px, 17.5vw, 360px);
+  margin: 0;
+  /* Marge égale sur les quatre côtés : sans légende, un bord bas plus large
+     ferait cadre vide. C'est la légende, quand il y en a une, qui ajoute sa
+     propre hauteur en dessous. */
+  padding: 12px;
+  border-radius: 5px 22px 5px 22px;
+  border: 1px solid var(--line-dark);
+  background: var(--paper);
+  box-shadow: 9px 9px 0 var(--blue-light), 0 20px 36px rgba(10,30,60,0.10);
+  transform: rotate(4deg);   /* penchée vers l'extérieur, la carte étant à sa gauche */
+}
+.ab-postcard img { width: 100%; height: auto; border-radius: 6px; }
+.ab-postcard figcaption { padding: 0.75rem 0.15rem 0.1rem; font-size: 0.85rem; line-height: 1.5; color: var(--ash-dark); }
+.ab-row--map .ab-text { position: relative; max-width: 700px; margin-top: -2.5rem; }
+/* Un titre du site, pas un objet à part. Le cadre bleu incliné qu'il portait
+   venait de l'image de référence : rien d'autre sur le site ne titre comme ça,
+   et l'utilisateur l'a trouvé mal intégré. Le vocabulaire maison, c'est
+   Unbounded 800 en encre pleine, sans fond ni rotation — comme `.tools-line`
+   juste au-dessus dans la même section, et comme `.edu-heading`. Le surlignage
+   bleu (`.hl`) est réservé à UN MOT dans une phrase, et seulement dans le titre
+   de l'accueil : ne pas l'étendre à un titre entier.
+   La taille passe sous celle de `.tools-line` (4,6rem) : c'est le deuxième
+   temps de la section, pas son ouverture. */
+.ab-row--map .ab-title {
+  margin-bottom: 1.1rem;
+  font-size: clamp(2rem, 4.2vw, 3.6rem);
+  line-height: 1.04;
+  letter-spacing: -0.02em;
+}
+.ab-row--map .ab-copy p { max-width: 56ch; font-size: clamp(1.05rem, 1.65vw, 1.3rem); }
+.ab-row--map .ab-skills { max-width: 620px; }
+/* À partir de 1000px : la carte passe EN FOND et le texte se pose dessus.
+   En dessous, on garde la carte suivie du texte — la carte y serait trop basse
+   (sa largeur divisée par ~2) pour porter un titre et deux paragraphes, qui se
+   retrouveraient tassés l'un sur l'autre. Ce n'est pas un repli au rabais :
+   c'est la même carte, juste rendue au fil du texte. */
+@media (min-width: 1000px) {
+  .ab-row--map {
+    /* ⚠ La carte fait EXACTEMENT une largeur d'écran, jamais plus : toute la
+       Bretagne doit tenir dedans. Une version précédente débordait à droite et
+       rognait l'Ille-et-Vilaine — refusée par l'utilisateur, ne pas y revenir.
+       La ligne vit dans la colonne de contenu, centrée : ces deux marges
+       l'élargissent pile aux bords de l'écran (`50%` se lit sur la colonne,
+       `50vw` sur la fenêtre). Le dépassement résiduel dû à la barre de
+       défilement (100vw l'inclut, la colonne non) est absorbé par
+       `overflow-x: hidden` sur <body> — déjà là pour #passions, ne pas le retirer. */
+    width: 100vw;
+    margin-left: calc(50% - 50vw);
+    margin-right: calc(50% - 50vw);
+  }
+  .ab-map-scene { margin-inline: 0; }
+  /* La photo en haut à gauche, le récit en bas à gauche : tous deux calés sur
+     la gouttière de la page, pas sur la carte, pour rester alignés avec la
+     frise d'outils au-dessus. */
+  /* À cheval sur la frontière : la Bretagne s'arrête à 72,9 % de la largeur du
+     cadre, la photo est centrée sur 73,3 % (elle va de 65,5 % à 81 %). Ce
+     `right` tient à toutes les largeurs parce que la photo elle aussi est en
+     `vw` : 100 % − 19 % − 15,5 % de largeur. En recadrant la carte ou en
+     changeant la largeur de la photo, refaire ce calcul. */
+  .ab-postcard { top: 8%; right: 18%; }
+  .ab-row--map .ab-text {
+    position: absolute;
+    left: var(--edge);
+    bottom: clamp(1.5rem, 3.5vw, 3.5rem);
+    width: min(44%, 560px);
+    max-width: none;
+    margin-top: 0;
+  }
+  /* Resserré par rapport à la version empilée : la colonne fait 560px au lieu
+     de 700, et le texte est posé sur un fond dessiné, pas sur du blanc nu.
+     Le titre, lui, garde la même règle des deux côtés : une seule définition. */
+  .ab-row--map .ab-copy p { font-size: clamp(0.98rem, 1.15vw, 1.15rem); line-height: 1.7; }
+}
+@media (max-width: 600px) {
+  .ab-map-scene { margin-inline: -0.6rem; margin-top: 3rem; }
+  .ab-postcard { width: 42%; right: -1%; top: -10%; padding: 6px; border-radius: 9px; }
+  .ab-postcard figcaption { font-size: 0.65rem; padding: 0.45rem 0 0.05rem; }
+  .ab-row--map .ab-text { margin-top: 1.5rem; }
+}
+.ab-shot figcaption {
+  padding: 0.85rem 0.2rem 1.1rem;
+  font-size: 0.85rem;
+  line-height: 1.45;
+  color: var(--ash-dark);
+}
+.ab-title {
+  font-family: var(--font-display);
+  font-weight: 800;
+  font-size: clamp(1.5rem, 3.2vw, 2.4rem);
+  line-height: 1.1;
+  margin-bottom: 0.9rem;
+}
+.ab-text p { color: var(--ash-dark); line-height: 1.65; max-width: 44ch; }
+.ab-copy { margin-top: 1.3rem; }
+.ab-copy p { font-size: clamp(1rem, 1.3vw, 1.12rem); line-height: 1.8; }
+.ab-copy p + p { margin-top: 1.15rem; }
+.ab-copy strong { color: var(--ink); font-weight: 700; }
+.about .ab-copy strong { color: var(--blue-deep); }
+.ab-facts { list-style: none; display: flex; flex-wrap: wrap; gap: 0.5rem; margin-top: 1.4rem; }
+.ab-facts li {
+  padding: 0.45rem 0.9rem;
+  border: 1.5px solid var(--line-dark);
+  border-radius: 100px;
+  font-size: 0.8rem;
+  font-weight: 600;
+}
+/* compétences personnelles, sous « D'où je viens » : pastilles pleines pour les
+   distinguer des faits (Lannion, BUT MMI…), qui sont en contour */
+.ab-skills-label {
+  margin-top: 1.4rem;
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--ash-dark);
+}
+.ab-skills { list-style: none; display: flex; flex-wrap: wrap; gap: 0.4rem; margin-top: 0.6rem; }
+.ab-skills li {
+  padding: 0.36rem 0.78rem;
+  border-radius: 100px;
+  background: var(--paper-dim);
+  font-size: 0.76rem;
+  font-weight: 600;
+  color: var(--ink);
+}
+
+/* ============================= À PROPOS — FRISE D'OUTILS ============================= */
+/* Reprise de la référence donnée par l'utilisateur : le titre est coupé en deux
+   et la frise de tuiles s'installe entre les deux moitiés, ligne du haut calée à
+   gauche, ligne du bas à droite. Tout vit dans #apropos, la seule section claire :
+   les tuiles, sombres et colorées, s'y détachent sans avoir besoin de bordure. */
+.tools {
+  position: relative;
+  margin-bottom: clamp(4rem, 7vw, 6rem);
+  padding: clamp(1.5rem, 3.5vw, 3rem);
+  border: 1px solid var(--line-dark);
+  border-radius: 34px 8px 34px 8px;
+  background: rgba(255,255,255,0.84);
+  box-shadow: 10px 10px 0 var(--blue-light);
+}
+.tools-line {
+  font-family: var(--font-display);
+  font-weight: 800;
+  font-size: clamp(1.9rem, 6vw, 4.6rem);
+  line-height: 1;
+  letter-spacing: -0.025em;
+}
+.tools-line-a { text-align: left; }
+.tools-line-b { text-align: right; }
+
+.tools-row {
+  list-style: none;
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  /* variable, parce qu'au-dessus de 701px cet écart passe DANS les tuiles
+     (marge interne) au lieu de rester un `gap` mort entre elles — voir plus bas */
+  --gap: clamp(0.55rem, 1.5vw, 1.2rem);
+  gap: var(--gap);
+  /* La marge du haut réserve la place que prend la tuile agrandie : avec une
+     origine en bas, elle grandit vers le haut de (--zoom − 1) fois sa largeur.
+     Calibrée pour tenir même à --zoom: 2. En la réduisant, la tuile survolée
+     vient mordre sur le titre au-dessus. */
+  margin: clamp(2.6rem, 5.2vw, 4.4rem) 0 clamp(1.4rem, 3vw, 2.2rem);
+
+  /* ======= LES QUATRE SEULS RÉGLAGES DE LA FRISE =======
+     Tout le reste — échelles, décalages, écartement — se recalcule à partir
+     d'eux. Ne jamais écrire une de ces valeurs en dur plus bas : l'écart entre
+     les tuiles cesserait d'être constant dès qu'on en change une.
+     L'utilisateur a demandé plusieurs fois de revoir ces valeurs : c'est ici, et
+     nulle part ailleurs. */
+  --tw: clamp(44px, 5.2vw, 62px);  /* taille d'une tuile au repos */
+  --zoom: 1.4;                     /* la tuile sous la souris */
+  --zoom-near: 1.2;                /* ses deux voisines immédiates */
+  --zoom-speed: 0.65s;             /* durée de l'agrandissement */
+}
+.tool { position: relative; display: flex; flex-direction: column; align-items: center; }
+.tool-tile {
+  display: grid;
+  place-items: center;
+  width: var(--tw);
+  aspect-ratio: 1;
+  border-radius: clamp(12px, 1.5vw, 17px);
+  overflow: hidden;
+  /* AUCUN fond, aucun filet, aucune ombre : on ne voit QUE le logo (demande de
+     l'utilisateur). Les fichiers qui sont des icônes d'app portent déjà leur
+     propre fond ; les autres sont des marques nues, et on ne leur en invente pas.
+     Ne pas remettre de `background` ici : trois versions successives en ont posé
+     un, toutes refusées. `color` ne sert qu'au monogramme de repli.
+     Le rayon et `overflow` ne servent plus qu'à arrondir les rares logos dont le
+     fichier a un fond rectangulaire (badges HTML et CSS). */
+  background: none;
+  color: var(--black);
+  font-family: var(--font-display);
+  font-weight: 800;
+  font-size: clamp(0.9rem, 1.6vw, 1.3rem);
+  /* elle grandit vers le HAUT : le bas des tuiles reste aligné sur une même
+     ligne, comme un dock, et l'étiquette en dessous ne bouge pas */
+  transform-origin: bottom center;
+  /* c'est elle qui rend l'agrandissement progressif au lieu d'instantané */
+  transition: transform var(--zoom-speed, 0.65s) cubic-bezier(.16,.8,.24,1);
+}
+/* UNE SEULE règle pour les onze : même cadre carré, logo entier dedans.
+   `contain` et non `cover` : un logo plus large que haut serait rogné, et deux
+   logos rognés différemment ne se liraient plus à la même taille. Pas de cas
+   particulier ici — chaque fois qu'il y en a eu un, la frise a paru irrégulière. */
+.tool-tile img { width: 100%; height: 100%; object-fit: contain; display: block; }
+
+/* ---- Agrandissement en dock ----
+   **Tout est en CSS, volontairement.** Une version pilotée en JavaScript a été
+   tentée pour rendre l'agrandissement continu d'une tuile à l'autre : elle posait
+   un `transform` inline sur chaque tuile dès le chargement, ce qui écrasait ces
+   règles-ci, et plus aucune application ne grossissait. Ne pas la réintroduire
+   sans pouvoir la tester dans un vrai navigateur.
+   La tuile survolée grossit (×2), ses deux voisines immédiates un peu moins
+   (×1,5), et **tout le reste de la frise s'écarte pour que l'espace entre les
+   tuiles ne se referme jamais** — exigence de l'utilisateur. Aucune ne s'efface :
+   un assombrissement des voisines a été essayé puis retiré.
+
+   Le calcul des décalages est fait EN CSS, à partir de --zoom et --zoom-near :
+   une tuile agrandie déborde de (zoom − 1) / 2 de sa largeur **de chaque côté**,
+   sa voisine recule donc d'autant (--push-near) ; cette voisine grossit elle
+   aussi de (zoom-near − 1) / 2 par côté, donc tout ce qui vient après recule de
+   (zoom − 1) / 2 + (zoom-near − 1) (--push-far). Changer une échelle en haut de
+   .tools-row suffit : l'écartement suit, et l'écart entre tuiles reste constant.
+
+   Ordre des règles : `~` (toutes celles d'après) AVANT `+` (la voisine immédiate),
+   qui a la même spécificité et doit gagner. Ne pas les intervertir.
+   Le côté DROIT se cible avec `~` et `+`, le côté GAUCHE avec `:has()`. Sans
+   `:has()` (navigateur ancien), seule la moitié droite s'écarte : la frise reste
+   parfaitement utilisable, c'est une dégradation acceptable.
+
+   Coupé sous 701px : la frise y tiendrait sur deux lignes, et un décalage
+   horizontal n'a aucun sens d'une ligne à l'autre. Pas de condition sur le type
+   de pointeur : un `(hover: hover)` de trop et l'agrandissement disparaît partout
+   où le navigateur ne se déclare pas comme il faut — c'est déjà arrivé. */
+@media (min-width: 701px) {
+  /* ---- Zones sensibles jointives ----
+     Un `gap` entre les tuiles est un trou mort : la souris qui s'y trouve ne
+     survole plus rien et tout retombe à ×1. L'écart passe donc en marge INTERNE
+     de chaque tuile, si bien que les zones de survol se touchent et que la plus
+     proche est toujours agrandie, la bascule se faisant au milieu de l'écart.
+     La largeur totale ne change pas : chaque tuile prend une moitié d'écart de
+     chaque côté, et les deux du bout n'en prennent que du côté intérieur — c'est
+     ce qui empêche le zoom de se déclencher dans le vide, au-delà de la frise. */
+  .tools-row { gap: 0; }
+  .tool { padding-inline: calc(var(--gap) / 2); }
+  .tool:first-child { padding-left: 0; }
+  .tool:last-child { padding-right: 0; }
+  /* ces deux-là n'ayant plus leur marge des deux côtés, leur centre de boîte ne
+     coïncide plus avec celui de la tuile : l'étiquette se recale d'un quart d'écart */
+  .tool:first-child .tool-name { left: calc(50% - var(--gap) / 4); }
+  .tool:last-child .tool-name { left: calc(50% + var(--gap) / 4); }
+
+  /* de combien la tuile survolée déborde de chaque côté, et donc de combien sa
+     voisine doit reculer ; puis le recul de tout ce qui vient après */
+  .tools-row {
+    --push-near: calc(var(--tw) * (var(--zoom) - 1) / 2);
+    --push-far: calc(var(--tw) * ((var(--zoom) - 1) / 2 + var(--zoom-near) - 1));
+  }
+
+  .tool:hover { z-index: 3; }
+  .tool:hover .tool-tile { transform: scale(var(--zoom)); }
+
+  .tool:hover ~ .tool .tool-tile { transform: translateX(var(--push-far)); }
+  .tool:has(~ .tool:hover) .tool-tile { transform: translateX(calc(var(--push-far) * -1)); }
+
+  .tool:hover + .tool,
+  .tool:has(+ .tool:hover) { z-index: 2; }
+  .tool:hover + .tool .tool-tile { transform: translateX(var(--push-near)) scale(var(--zoom-near)); }
+  .tool:has(+ .tool:hover) .tool-tile { transform: translateX(calc(var(--push-near) * -1)) scale(var(--zoom-near)); }
+}
+
+/* L'étiquette de la référence. En `position: absolute` pour qu'elle ne pousse
+   pas les tuiles voisines en apparaissant. */
+.tool-name {
+  position: absolute;
+  top: calc(100% + 0.45rem);
+  left: 50%;
+  transform: translate(-50%, -4px);
+  padding: 0.25rem 0.65rem;
+  border-radius: 100px;
+  background: var(--paper-dim);
+  color: var(--ink);
+  font-size: 0.78rem;
+  font-weight: 600;
+  white-space: nowrap;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.25s ease, transform 0.25s ease;
+}
+.tool:hover .tool-name { opacity: 1; transform: translate(-50%, 0); }
+
+/* Sans survol possible, l'étiquette ne peut pas rester cachée : elle repasse
+   dans le flux, sous chaque tuile, et y reste. */
+@media (hover: none), (pointer: coarse) {
+  .tool { max-width: 84px; }
+  .tool-name {
+    position: static;
+    transform: none;
+    opacity: 1;
+    margin-top: 0.45rem;
+    padding: 0;
+    background: transparent;
+    color: var(--ash-dark);
+    font-size: 0.7rem;
+    line-height: 1.25;
+    white-space: normal;
+    text-align: center;
+  }
+}
+
+/* ============================= PASSIONS — TEXTE FIGÉ ============================= */
+/* Section sombre à part, après le blanc d'À propos. Le texte reste collé à
+   l'écran pendant que les visuels défilent dans la page et passent devant lui.
+   La colonne gauche du collage est simplement décalée pour laisser davantage
+   de temps de lecture avant le recouvrement.
+
+   `position: sticky` et RIEN D'AUTRE : pas de `pin`, pas de scroll détourné — la
+   page ne s'arrête jamais de défiler, contrainte posée par l'utilisateur au
+   moment de l'éventail et qui vaut pour tout le site.
+
+   Trois pièges à ne pas réintroduire :
+   - aucun `overflow: hidden` sur `.passions` ni sur un de ses ancêtres, ça tuerait
+     le sticky (sur `.pas-stage`, en revanche, c'est sans danger : il n'est pas
+     l'ancêtre du texte, c'est son frère) ;
+   - `min-height` fait toute la durée de l'effet : 300svh = le texte reste figé
+     pendant deux écrans de défilement (300 moins sa propre hauteur d'un écran).
+     C'est le réglage choisi par l'utilisateur. En le baissant, l'effet disparaît ;
+   - ce même `min-height` doit retomber à 0 sous 860px, sinon la page gagne trois
+     écrans de vide sur téléphone. */
+.passions {
+  position: relative;
+  min-height: 300svh;
+  background: var(--paper);
+  border-radius: clamp(22px, 3vw, 48px);
+}
+
+/* Le texte : collé en haut, haut d'un écran, son contenu centré dedans. */
+.pas-text {
+  position: sticky;
+  top: 0;
+  z-index: 1;
+  height: 100svh;
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  padding: 0;
+}
+.pas-copy {
+  position: relative;
+  width: min(calc(100% - 2 * var(--edge)), var(--maxw));
+  margin-inline: auto;
+}
+.pas-copy .section-title { max-width: 9ch; font-size: clamp(2.8rem, 6.5vw, 5.4rem); }
+.pas-lede {
+  max-width: 35ch;
+  margin-top: 1.6rem;
+  font-size: clamp(1rem, 1.5vw, 1.15rem);
+  line-height: 1.7;
+  color: var(--ash);
+}
+.pas-tags { display: flex; flex-wrap: wrap; gap: 0.45rem; margin-top: 1.5rem; }
+.pas-tags li {
+  padding: 0.42rem 0.82rem;
+  border: 1px solid var(--line-dark);
+  border-radius: 100px;
+  color: var(--ash);
+  font-size: 0.75rem;
+  font-weight: 600;
+}
+
+/* Les visuels restent répartis sur toute la largeur et passent devant le texte. */
+.pas-stage {
+  position: absolute;
+  inset: 0;
+  z-index: 2;
+  overflow: hidden;      /* rogne proprement les visuels qui débordent des bords */
+  pointer-events: none;  /* le texte dessous reste sélectionnable */
+}
+.pas-shot {
+  position: absolute;
+  left: var(--x);
+  top: var(--y);
+  /* le px de `--w` gouverne sur grand écran, le vw prend le relais sur petit */
+  width: min(var(--w), 30vw);
+  aspect-ratio: var(--ar);
+  margin: 0;
+  display: grid;
+  place-items: center;
+  border-radius: clamp(12px, 1.6vw, 20px);
+  overflow: hidden;
+  background: var(--ink-2);
+  border: 1px solid rgba(237,242,255,0.10);
+  box-shadow: 0 24px 60px rgba(3,6,13,0.55);
+  transform: rotate(var(--tilt));
+}
+.pas-shot img { width: 100%; height: 100%; object-fit: cover; }
+/* au-dessus de .pj-art-layer, qui est en position absolue */
+.pas-mark {
+  position: relative;
+  font-family: var(--font-display);
+  font-weight: 900;
+  font-size: clamp(1.1rem, 2.4vw, 2rem);
+  color: transparent;
+  -webkit-text-stroke: 1.5px rgba(237,242,255,0.8);
+}
+
+/* Sous 860px, tout retombe à plat : le texte n'est plus figé, les visuels
+   repassent dans le flux en bande au-dessus de lui. Huit visuels par-dessus une
+   colonne étroite rendraient le texte illisible, et trois écrans de section
+   n'ont aucun sens sur un téléphone. */
+@media (max-width: 859px) {
+  /* flex uniquement pour l'ordre : dans le HTML le texte vient en premier, alors
+     qu'à plat on veut voir les visuels avant de lire */
+  .passions { min-height: 0; display: flex; flex-direction: column; }
+  .pas-text {
+    position: static;
+    height: auto;
+    padding: 5rem 0 2.5rem;
+  }
+  .pas-copy .section-title { font-size: clamp(2.35rem, 10vw, 3.4rem); }
+  .pas-stage {
+    position: static;
+    padding: 0 var(--edge) 5rem;
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    align-items: start;
+    gap: 0.8rem;
+  }
+  .pas-shot {
+    position: static;
+    width: 100%;
+    box-shadow: none;
+  }
+  .pas-shot:nth-child(3) { margin-top: 4.5rem; }
+  .pas-shot:nth-child(6) { margin-top: 2rem; }
+  .pas-shot:nth-child(4), .pas-shot:nth-child(7) { grid-column: 1 / -1; width: 82%; justify-self: center; }
+}
+
+/* ============================= FORMATION ============================= */
+.edu { margin-top: clamp(3.5rem, 6vw, 5.5rem); }
+.edu-head { display: block; margin-bottom: clamp(1.5rem, 3vw, 2.5rem); }
+.edu-creative-head {
+  width: 100%;
+  grid-template-columns: 1fr;
+  grid-template-areas: "chip" "title";
+}
+.edu-creative-head .edu-heading { grid-area: title; max-width: 13ch; }
+.edu-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 0 clamp(1.5rem, 3vw, 2.5rem); align-items: start; }
+.edu-item { min-width: 0; border-top: 1px solid var(--line-dark); border-bottom: 1px solid var(--line-dark); }
+.edu-summary {
+  display: grid;
+  grid-template-columns: minmax(90px, auto) 34px minmax(0, 1fr) 22px;
+  align-items: center;
+  column-gap: 0.7rem;
+  min-height: 100px;
+  padding: 1rem 0.5rem;
+  cursor: pointer;
+  list-style: none;
+}
+.edu-summary::-webkit-details-marker { display: none; }
+.edu-summary:hover, .edu-summary:focus-visible, .edu-item[open] .edu-summary { background: var(--paper-dim); }
+.edu-summary-copy { min-width: 0; }
+.edu-years {
+  font-family: var(--font-display);
+  font-size: clamp(0.8rem, 1.2vw, 0.95rem);
+  font-weight: 700;
+  letter-spacing: -0.04em;
+  color: var(--accent-text);
+}
+.edu-status { display: block; margin-top: 0.25rem; color: var(--accent-text); font-size: 0.7rem; font-weight: 700; }
+.edu-school { display: block; margin-top: 0.3rem; color: var(--ash-dark); font-size: 0.78rem; }
+/* Même tuile que les logos d'expérience, en plus petit : le logo de l'école la
+   remplit s'il est carré, sinon il s'affiche en entier (voir home.js).
+   Le monogramme reste le repli si le fichier est introuvable. */
+.edu-logo {
+  flex-shrink: 0;
+  display: grid;
+  place-items: center;
+  width: 30px; height: 30px;
+  border-radius: 8px;
+  overflow: hidden;
+  /* même traitement que .job-logo, à l'échelle de la tuile */
+  background: var(--white);
+  border: 1px solid rgba(10,16,28,0.07);
+  box-shadow: 0 1px 2px rgba(10,16,28,0.05), 0 2px 6px rgba(10,16,28,0.06);
+  padding: 4px;
+  font-family: var(--font-display);
+  font-size: 0.6rem;
+  font-weight: 800;
+  letter-spacing: 0.04em;
+  color: var(--black);
+}
+.edu-logo img { width: 100%; height: 100%; object-fit: contain; display: block; }
+.edu-logo.is-wide { padding: 4px 2px; }
+.edu-title {
+  display: block;
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: clamp(0.82rem, 1.15vw, 1rem);
+  line-height: 1.35;
+  letter-spacing: -0.035em;
+}
+.edu-detail { overflow: hidden; padding: 0 0.75rem 1.25rem 8rem; }
+.edu-sub { color: var(--ink); font-size: 0.85rem; line-height: 1.5; margin-bottom: 0.6rem; }
+.edu-text { color: var(--ash-dark); font-size: 0.88rem; line-height: 1.6; }
+
+/* ============================= PROJETS — LISTE (projets.html) ============================= */
+.plist {
+  /* noir uni, sans halo : demande explicite pour cette page — le seul fondu
+     bleu de projets.html est celui du bloc de fin de page */
+  background: var(--paper);
+  color: var(--ink);
+  padding: 10rem 0 var(--section-space);
+}
+.plist-head { margin-bottom: var(--heading-space); }
+.plist-lede { margin-top: 1rem; max-width: 52ch; color: var(--ash-dark); font-size: clamp(1rem, 1.5vw, 1.12rem); line-height: 1.6; }
+
+/* Cartes horizontales : même anatomie que les projets phares, visuel à gauche.
+   Fond et bordure indispensables : sans eux, elles se fondraient dans le noir. */
+.pcards { list-style: none; display: flex; flex-direction: column; gap: clamp(1.5rem, 3vw, 2rem); }
+.pcard {
+  display: grid;
+  grid-template-columns: minmax(0, 42%) 1fr;
+  border: 1px solid var(--line-dark);
+  border-radius: var(--radius-card);
+  padding: 0.65rem;
+  overflow: hidden;
+  background: var(--paper-dim);
+  color: var(--ink);
+  transition: background 0.25s ease;
+}
+/* survol : un cran au-dessus, sans mouvement (règle commune aux boutons) */
+.pcard:hover, .pcard:focus-visible { background: var(--ink-3); }
+.pcard .pc-media { aspect-ratio: auto; min-height: 300px; }
+.pcard-info {
+  display: flex;
+  flex-direction: column;
+  padding: clamp(1.3rem, 2.8vw, 2rem);
+  min-width: 0;
+}
+.pcard .pc-title { font-size: clamp(1.2rem, 2.2vw, 1.7rem); }
+.pcard-short { display: block; margin-top: 0.7rem; max-width: 58ch; color: var(--ash-dark); font-size: 0.95rem; line-height: 1.6; }
+.pcard-go { display: block; margin-top: 1.1rem; font-size: 0.88rem; font-weight: 700; }
+
+/* ============================= PAGE PROJET (projet.html) ============================= */
+.pdetail { background: var(--paper); color: var(--ink); padding: 8rem 0 var(--section-space); }
+.pd-back {
+  display: inline-flex;
+  align-items: center;
+  min-height: 44px;
+  margin-bottom: clamp(1.6rem, 3vw, 2.4rem);
+  font-size: 0.9rem;
+  font-weight: 700;
+  color: var(--ash-dark);
+  transition: color 0.25s ease;
+}
+.pd-back:hover { color: var(--ink); }
+.pd-head .pc-top { flex-direction: row; flex-wrap: wrap; align-items: baseline; gap: 0.5rem 1rem; }
+.pd-kicker { margin-bottom: 1.4rem; }
+.pd-title {
+  margin-top: 0.3rem;
+  max-width: 24ch;
+  font-family: var(--font-display);
+  font-weight: 800;
+  font-size: clamp(1.8rem, 4.2vw, 3.1rem);
+  line-height: 1.12;
+  letter-spacing: -0.02em;
+}
+.pd-disc { margin-top: 1rem; color: var(--ash-dark); font-size: clamp(1rem, 1.5vw, 1.12rem); }
+.pd-media {
+  position: relative;
+  margin-top: clamp(2rem, 4vw, 3rem);
+  aspect-ratio: 16 / 8;
+  border-radius: var(--radius-card);
+  overflow: hidden;
+  background: var(--ink-2);
+}
+.pd-media img { width: 100%; height: 100%; object-fit: cover; display: block; }
+/* Vidéo de projet (logo animé) : elle remplit le cadre 16/8 comme le ferait une
+   image de couverture. `contain` et non `cover` : un logo rogné n'a plus de sens,
+   et le fond sombre du cadre fait office de marge. */
+.pd-video { width: 100%; height: 100%; object-fit: contain; display: block; border: 0; }
+
+/* Plusieurs visuels côte à côte, à la place du cadre unique — pour un projet qui
+   en compte plusieurs (les affiches). La grille s'ajuste au nombre d'entrées de
+   `shots` : rien à changer en ajoutant une affiche. Les visuels gardent leurs
+   proportions, ici verticales, donc pas de cadre à ratio fixe. */
+.pd-shots {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+  gap: clamp(0.8rem, 2vw, 1.4rem);
+  margin-top: clamp(2rem, 4vw, 3rem);
+}
+.pd-shots img {
+  width: 100%;
+  height: auto;
+  display: block;
+  border-radius: var(--radius-media);
+  background: var(--ink-2);
+  border: 1px solid var(--line-dark);
+}
+.pd-body {
+  display: grid;
+  grid-template-columns: 1fr minmax(0, 300px);
+  gap: clamp(2rem, 5vw, 4rem);
+  margin-top: clamp(2.5rem, 5vw, 4rem);
+}
+.pd-text h2 { font-family: var(--font-display); font-weight: 800; font-size: clamp(1.2rem, 2vw, 1.5rem); margin-bottom: 1rem; }
+.pd-text p { max-width: 62ch; color: var(--ash-dark); font-size: 1.05rem; line-height: 1.75; }
+/* La page enchaîne plusieurs sections (Le contexte, La démarche, Le défi) : il
+   faut de l'air avant chaque titre, sauf le premier. */
+.pd-text > * + h2 { margin-top: clamp(2.2rem, 4.5vw, 3.2rem); }
+
+/* « La démarche » : une étape par ligne, son nom en tête. Le filet à gauche
+   remplace une puce — il tient la colonne sans ajouter de décoration. */
+.pd-steps {
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: clamp(0.9rem, 2vw, 1.3rem);
+  max-width: 62ch;
+}
+.pd-steps li {
+  padding-left: clamp(0.9rem, 2vw, 1.2rem);
+  border-left: 2px solid var(--line-dark);
+  color: var(--ash-dark);
+  font-size: 1.02rem;
+  line-height: 1.7;
+}
+.pd-steps strong {
+  display: block;
+  margin-bottom: 0.15rem;
+  color: var(--ink);
+  font-weight: 700;
+}
+
+/* « Ce que j'en retiens » : la note de fin, détachée du corps du texte et posée
+   sur toute la largeur, juste avant le lien vers le projet suivant. */
+.pd-takeaway {
+  display: block;
+  max-width: 62ch;
+  margin-top: clamp(2.5rem, 5vw, 4rem);
+  padding: clamp(1.3rem, 3vw, 1.9rem);
+  border-radius: 18px;
+  border-left: 3px solid var(--blue);
+  background: var(--paper-dim);
+}
+.pd-takeaway p:last-child {
+  margin-top: 0.5rem;
+  color: var(--ink);
+  font-size: 1.05rem;
+  line-height: 1.7;
+}
+.pd-facts { align-self: start; padding: 1.5rem; border: 1px solid var(--line-dark); border-radius: var(--radius-card); background: var(--paper-dim); }
+.pd-facts dt, .pd-label {
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--ash-dark);
+}
+.pd-facts dd { margin: 0.35rem 0 1.2rem; font-weight: 600; line-height: 1.45; }
+.pd-tools { list-style: none; display: flex; flex-wrap: wrap; gap: 0.4rem; margin-top: 0.6rem; }
+.pd-tools li { padding: 0.4rem 0.8rem; border: 1px solid var(--line-dark); border-radius: 100px; font-size: 0.75rem; font-weight: 500; color: var(--ash-dark); }
+.pd-next {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  margin-top: clamp(3rem, 6vw, 4.5rem);
+  padding: 1.4rem 1.6rem;
+  border-radius: var(--radius-card);
+  background: var(--blue);
+  color: var(--white);
+  font-size: 1.4rem;
+  transition: background 0.25s ease;
+}
+.pd-next:hover { background: var(--blue-deep); }
+.pd-next small { display: block; font-size: 0.72rem; font-weight: 700; letter-spacing: 0.14em; text-transform: uppercase; color: rgba(249,251,255,0.75); }
+.pd-next strong { display: block; margin-top: 0.25rem; font-family: var(--font-display); font-size: clamp(1rem, 2vw, 1.3rem); }
+
+/* ============================= EXPÉRIENCES — LIGNES DÉPLIABLES ============================= */
+.jobs {
+  list-style: none;
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 0 clamp(1.5rem, 3vw, 2.5rem);
+  align-items: start;
+}
+.job {
+  min-width: 0;
+  border-top: 1px solid var(--line-dark);
+}
+.jobs > li:nth-last-child(-n + 2) .job { border-bottom: 1px solid var(--line-dark); }
+.job-summary {
+  display: grid;
+  grid-template-columns: 28px 44px minmax(0, 1fr) 74px 22px;
+  align-items: center;
+  column-gap: clamp(0.55rem, 1.3vw, 0.9rem);
+  min-height: 104px;
+  padding: 0.9rem 0.5rem;
+  cursor: pointer;
+  list-style: none;
+}
+.job-summary::-webkit-details-marker { display: none; }
+.job-summary:hover, .job-summary:focus-visible, .job[open] .job-summary { background: var(--paper-dim); }
+.job-summary-copy { min-width: 0; }
+.entry-toggle {
+  justify-self: end;
+  display: grid;
+  place-items: center;
+  width: 22px;
+  height: 22px;
+  color: var(--blue-deep);
+  font-size: 1.45rem;
+  line-height: 1;
+  transition: transform 0.25s ease;
+}
+.job[open] .entry-toggle, .edu-item[open] .entry-toggle { transform: rotate(45deg); }
+.job-index {
+  font-family: var(--font-display);
+  font-size: 0.85rem;
+  font-weight: 900;
+  color: var(--accent-text);
+}
+/* Vignette façon icône d'application : le logo carré remplit la tuile arrondie et
+   garde la couleur de fond de la marque. Le filet évite qu'une tuile blanche se
+   fonde dans la page, elle aussi blanche. */
+.job-logo {
+  display: grid;
+  place-items: center;
+  width: 44px; height: 44px;
+  border-radius: 11px;
+  /* blanc littéral : les logos de marque sont pensés pour un fond clair,
+     une tuile noire les avalerait */
+  background: var(--white);
+  /* Filet à peine visible + ombre douce. Sur une section blanche la tuile est
+     blanche elle aussi : sans ça elle n'existe pas. L'ombre la décolle de la
+     page au lieu de la cerner d'un trait — demande de l'utilisateur. */
+  border: 1px solid rgba(10,16,28,0.07);
+  box-shadow: 0 1px 2px rgba(10,16,28,0.05), 0 4px 10px rgba(10,16,28,0.07);
+  overflow: hidden;
+  /* le logo respire au lieu de toucher les bords : c'est ce qui le fait
+     ressembler à une icône d'application plutôt qu'à une image collée */
+  padding: 6px;
+  font-family: var(--font-display);
+  font-size: 0.78rem;
+  font-weight: 800;
+  letter-spacing: 0.02em;
+  color: var(--black);
+}
+/* TOUS les logos sont montrés en entier, jamais rognés. `cover` coupait au ras
+   du cadre les logos à peu près carrés, ce qui les faisait paraître mal posés. */
+.job-logo img { width: 100%; height: 100%; object-fit: contain; display: block; }
+/* nettement plus large que haut : moins de marge latérale, sinon il ne reste
+   qu'un mince filet de logo au milieu de la tuile */
+.job-logo.is-wide { padding: 6px 3px; }
+.job-role {
+  display: block;
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: clamp(0.82rem, 1.15vw, 1rem);
+  line-height: 1.35;
+  letter-spacing: -0.025em;
+}
+.job-org { display: block; margin-top: 0.3rem; font-size: 0.78rem; color: var(--ash-dark); }
+.job-when { display: grid; gap: 0.1rem; justify-items: end; color: var(--ash-dark); }
+.job-year { font-family: var(--font-display); font-size: 0.95rem; font-weight: 700; line-height: 1.2; color: var(--accent-text); }
+.job-duration { font-size: 0.68rem; text-align: right; }
+.job-detail { overflow: hidden; padding: 0 1rem 1.4rem 6.5rem; }
+.job-text { color: var(--ash-dark); font-size: 0.88rem; line-height: 1.6; max-width: 68ch; }
+.job-tags { list-style: none; display: flex; flex-wrap: wrap; gap: 0.4rem; margin-top: 0.8rem; }
+.job-tags li {
+  padding: 0.3rem 0.65rem;
+  border: 1px solid var(--line-dark);
+  border-radius: 100px;
+  font-size: 0.7rem;
+  font-weight: 500;
+  color: var(--ash-dark);
+}
+
+/* ============================= RESPONSIVE ============================= */
+@media (max-width: 760px) {
+  .creative-head {
+    grid-template-columns: 1fr;
+    grid-template-areas: "chip" "title" "note";
+    gap: 1rem;
+  }
+  .creative-note { max-width: 38ch; padding-bottom: 0; }
+  .tools { padding: 1.5rem 1rem; box-shadow: 6px 6px 0 var(--blue-light); }
+  .pcard { grid-template-columns: 1fr; }
+  .pcard .pc-media { aspect-ratio: 16 / 9; min-height: 0; }
+  .pd-body { grid-template-columns: 1fr; }
+  .pd-media { aspect-ratio: 16 / 10; }
+
+  /* Plus la place pour « Télécharger le CV » : le libellé se raccourcit au lieu
+     de disparaître. La capsule et le menu ouvert étant le même objet, le cacher
+     ici le retirerait aussi du menu — et le CV n'aurait plus aucun accès. */
+  .cv-full { display: none; }
+  .cv-short { display: inline; }
+  .menu-head { gap: 0.9rem; }
+}
+@media (max-width: 859px) {
+  .jobs, .edu-grid { grid-template-columns: 1fr; }
+  .jobs > li:nth-last-child(2) .job { border-bottom: 0; }
+  .job-summary { min-height: 86px; }
+  .edu-summary { min-height: 88px; }
+  .ab-row { grid-template-columns: 1fr; gap: 1.8rem; }
+  .ab-row:nth-child(even) .ab-shot { order: 0; }
+  .edu-item + .edu-item { border-top: 0; }
+  .fan { padding: var(--section-space) 0 7rem; }
+  /* une seule colonne : la carte phare reprend la largeur des autres, seule sa
+     couleur la distingue encore */
+  .fan-deck { flex-direction: column; gap: 1.6rem; }
+  .fan-card { flex: 0 0 auto; }
+  /* le titre coupé en deux perd son décalage : sur une colonne étroite,
+     les deux moitiés se lisent mieux alignées à gauche */
+  .tools-line-b { text-align: left; }
+}
+@media (max-width: 860px) {
+  /* Les trois zones du pied de page s'empilent, pastilles en premier */
+  .site-footer { grid-template-columns: 1fr; justify-items: center; text-align: center; gap: 1.8rem; }
+  .foot-links { order: -1; }
+  .foot-end { justify-self: center; text-align: center; }
+}
+@media (max-width: 600px) {
+  .job-summary {
+    grid-template-columns: 24px 40px minmax(0, 1fr) 22px;
+    gap: 0.5rem;
+  }
+  .job-logo { width: 40px; height: 40px; }
+  .job-when { grid-column: 3; grid-row: 2; display: flex; justify-items: start; align-items: baseline; gap: 0.45rem; }
+  .job-duration { text-align: left; }
+  .job-summary .entry-toggle { grid-column: 4; grid-row: 1 / span 2; }
+  .job-detail { padding-left: 4.7rem; }
+  .edu-summary { grid-template-columns: 80px 30px minmax(0, 1fr) 22px; gap: 0.5rem; }
+  .edu-detail { padding-left: 0.75rem; }
+  .edu-years { font-size: 0.72rem; }
+  /* Le centrage reste lié à la fenêtre, même si un visuel plus large que la
+     page crée momentanément une zone de débordement pendant son animation. */
+  .nav-center { position: fixed; left: 50vw; right: auto; transform: translateX(-50%); }
+  .hero-floater { width: clamp(34px, 12vw, 52px); opacity: 0.12; }
+  .hf-layers, .hf-terminal, .hf-cube, .hf-timeline { display: none; }
+  .hf-bezier { left: 5%; top: 21%; }
+  .hf-wave { left: 10%; top: 70%; }
+  .hf-type { right: 7%; top: 19%; }
+  .hf-keyframes { right: 4%; top: 64%; }
+  .hf-crop { left: 5%; top: 47%; }
+  .hero-title { font-size: clamp(2.1rem, 9.5vw, 2.85rem); }
+  .hero-mobile-break { display: block; }
+  .section-title, .edu-heading { font-size: clamp(1.8rem, 7.4vw, 2.8rem); }
+  .section-head { gap: 1.25rem; }
+  .section-kicker { font-size: 0.65rem; letter-spacing: 0.09em; }
+  .plist { padding-top: 8rem; }
+  .fan-info { padding: 1.1rem 0.65rem 0.35rem; }
+  .pc-title { font-size: 1.2rem; }
+  .pcard-info { padding: 1.2rem 0.7rem 0.5rem; }
+  .about, .xp { padding: 5.5rem 0; }
+  .contact { padding: 5.5rem 0 2rem; }
+  .contact-mail { border-radius: 20px; }
+
+  .menu-link { min-height: 84px; padding: 0.75rem 1rem; }
+  .menu-thumb { width: 64px; height: 64px; border-radius: 15px; }
+  .menu-head, .menu-social { padding-left: 1rem; padding-right: 1rem; }
+}
