@@ -43,8 +43,8 @@ let menuTl = null;
 // Rien à déplacer : la capsule est centrée sur l'écran et ne bouge pas, elle
 // s'élargit autour de son axe. Rien ne bouge non plus à l'intérieur — l'en-tête
 // est centré et garde son écart, le menu est hors du flux et centré lui aussi.
-const PANEL_DUR = 0.32;     // ouverture rapide, avec la capsule qui devient panneau
-const CLOSE_DUR = 0.20;     // fermeture plus vive
+const PANEL_DUR = 0.12;     // ouverture quasi immédiate
+const CLOSE_DUR = 0.08;     // fermeture quasi immédiate
 const PILL_RADIUS = 100;    // l'arrondi de la capsule fermée, en px
 const PANEL_RADIUS = 26;    // celui du panneau ouvert
 const HEAD_H = 56;          // hauteur de l'en-tête, la même que la capsule fermée
@@ -101,7 +101,7 @@ function openMenu() {
       { width: from.width, height: from.height, borderRadius: PILL_RADIUS },
       {
         width: to.width, height: to.height, borderRadius: PANEL_RADIUS,
-        duration: mobileLayout() ? 0.28 : PANEL_DUR, ease: 'power3.inOut'
+        duration: PANEL_DUR, ease: 'power2.out'
       });
 }
 
@@ -154,7 +154,7 @@ function closeMenu({ restoreFocus = true } = {}) {
       { width: from.width, height: from.height, borderRadius: PANEL_RADIUS },
       {
         width: to.width, height: to.height, borderRadius: PILL_RADIUS,
-        duration: mobileLayout() ? 0.18 : CLOSE_DUR, ease: 'power3.in'
+        duration: CLOSE_DUR, ease: 'power2.out'
       });
 }
 
