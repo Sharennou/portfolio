@@ -5,10 +5,23 @@
 // Vivait dans le bloc de la vue plein écran des projets, supprimé avec elle :
 // le menu s'en sert aussi, sa place est donc ici.
 let lenis = null;   // défilement fluide, initialisé plus bas
+const mobileLayout = () => window.matchMedia(mobileLayoutQuery).matches;
+let lockedMobileY = null;
 const lockScroll = (on) => {
+  // Sur iOS, overflow:hidden seul n'empêche pas toujours la page de bouger.
+  // La position est conservée avant de fixer le body, puis rendue à la fermeture.
+  if (on && mobileLayout()) {
+    lockedMobileY = window.scrollY;
+    document.body.style.setProperty('--locked-scroll-y', `${-lockedMobileY}px`);
+  }
   document.documentElement.classList.toggle('is-locked', on);
   // sans ça, la page continue de glisser derrière le menu ouvert
   if (lenis) on ? lenis.stop() : lenis.start();
+  if (!on && lockedMobileY !== null) {
+    document.body.style.removeProperty('--locked-scroll-y');
+    window.scrollTo({ top: lockedMobileY, behavior: 'instant' });
+    lockedMobileY = null;
+  }
 };
 
 const navLogo = document.getElementById('navLogo');
@@ -43,7 +56,10 @@ const HEAD_H = 56;          // hauteur de l'en-tête, la même que la capsule fe
 // souris ait bougé : la taille ouverte, elle, n'existe que dans les valeurs
 // animées, parce que `.menu-nav` est hors du flux et ne compte pas dans la
 // hauteur naturelle. Tant que le menu est ouvert, les valeurs restent posées.
-const releaseShell = () => gsap.set(menu, { clearProps: 'width,height,borderRadius' });
+const releaseShell = () => {
+  if (motionOK) gsap.set(menu, { clearProps: 'width,height,borderRadius' });
+  else ['width', 'height', 'border-radius'].forEach(prop => menu.style.removeProperty(prop));
+};
 
 function setBurgerState(open) {
   burger.classList.toggle('is-open', open);
@@ -55,16 +71,24 @@ function openMenu() {
   if (menuOpen) return;
   menuOpen = true;
   setBurgerState(true);
+  lockScroll(true);
   // `is-showing` rend le menu atteignable au clavier, `is-open` bascule les
   // couleurs. Deux classes et non une : à la fermeture, les couleurs doivent
   // repartir tout de suite alors que le contenu reste visible jusqu'au bout.
   menu.classList.add('is-open', 'is-showing');
-  lockScroll(true);
+  // WebKit peut conserver visibility:hidden après l'ouverture d'un <details>.
+  // Poser la valeur sur le nav lui-même force sa mise à jour, y compris sans GSAP.
+  menuNav.style.visibility = 'visible';
   // Surtout PAS de focus forcé sur le premier lien : l'anneau de focus s'affichait
   // en gros bleu autour d'« Accueil » à chaque ouverture, et on croyait l'entrée
   // sélectionnée. Inutile en plus : le bouton « Menu » étant dans la capsule, une
   // tabulation depuis lui entre naturellement dans le menu.
-  if (!motionOK) return;
+  if (!motionOK) {
+    menu.style.width = `${menuNav.offsetWidth}px`;
+    menu.style.height = `${HEAD_H + menuNav.offsetHeight}px`;
+    menu.style.borderRadius = `${PANEL_RADIUS}px`;
+    return;
+  }
 
   if (menuTl) menuTl.kill();
   releaseShell();
@@ -78,14 +102,29 @@ function openMenu() {
       { width: from.width, height: from.height, borderRadius: PILL_RADIUS },
       {
         width: to.width, height: to.height, borderRadius: PANEL_RADIUS,
-        duration: PANEL_DUR, ease: 'power3.inOut'
+        duration: mobileLayout() ? 0.42 : PANEL_DUR, ease: 'power3.inOut'
       });
 }
 
 // Les dimensions du panneau ouvert sont figées en pixels : elles ne suivraient pas
 // un redimensionnement de la fenêtre. On referme plutôt que d'afficher un panneau
 // à la mauvaise taille.
-window.addEventListener('resize', () => { if (menuOpen) closeMenu({ restoreFocus: false }); });
+let menuViewportWidth = window.innerWidth;
+window.addEventListener('resize', () => {
+  const widthChanged = window.innerWidth !== menuViewportWidth;
+  menuViewportWidth = window.innerWidth;
+  if (!menuOpen) return;
+  // La barre du navigateur mobile change la hauteur au défilement : le menu
+  // reste ouvert, avec son contenu défilable, tant que la largeur ne change pas.
+  if (mobileLayout() && !widthChanged) {
+    if (menuTl) menuTl.kill();
+    menu.style.width = `${menuNav.offsetWidth}px`;
+    menu.style.height = `${HEAD_H + menuNav.offsetHeight}px`;
+    menu.style.borderRadius = `${PANEL_RADIUS}px`;
+    return;
+  }
+  closeMenu({ restoreFocus: false });
+});
 
 function closeMenu({ restoreFocus = true } = {}) {
   if (!menuOpen) return;
@@ -98,8 +137,11 @@ function closeMenu({ restoreFocus = true } = {}) {
   // rendait au panneau les couleurs de la capsule — donc du BLANC au-dessus des
   // sections claires — et on voyait un panneau blanc rétrécir. Il reste sombre
   // jusqu'au bout et disparaît, c'est la demande de l'utilisateur.
-  const done = () => menu.classList.remove('is-open', 'is-showing');
-  if (!motionOK) { done(); return; }
+  const done = () => {
+    menu.classList.remove('is-open', 'is-showing');
+    menuNav.style.visibility = 'hidden';
+  };
+  if (!motionOK) { done(); releaseShell(); return; }
 
   if (menuTl) menuTl.kill();
   // On repart de la taille COURANTE : refermer au milieu d'une ouverture
@@ -113,7 +155,7 @@ function closeMenu({ restoreFocus = true } = {}) {
       { width: from.width, height: from.height, borderRadius: PANEL_RADIUS },
       {
         width: to.width, height: to.height, borderRadius: PILL_RADIUS,
-        duration: CLOSE_DUR, ease: 'power3.in'
+        duration: mobileLayout() ? 0.24 : CLOSE_DUR, ease: 'power3.in'
       });
 }
 
@@ -134,7 +176,8 @@ menu.addEventListener('click', (e) => {
   if (!link) return;
   closeMenu({ restoreFocus: false });
   // le focus suit la navigation, sinon il resterait sur un lien masqué
-  const target = document.querySelector(link.getAttribute('href'));
+  const href = link.getAttribute('href');
+  const target = href.startsWith('#') ? document.querySelector(href) : null;
   if (target) {
     target.setAttribute('tabindex', '-1');
     target.focus({ preventScroll: true });
@@ -194,7 +237,8 @@ document.addEventListener('click', (e) => {
   }
   e.preventDefault();
   const spacer = target.parentElement.classList.contains('pin-spacer') ? target.parentElement : null;
-  const top = (spacer || target).getBoundingClientRect().top + window.scrollY;
+  const offset = mobileLayout() ? parseFloat(getComputedStyle(target).scrollMarginTop) || 0 : 0;
+  const top = Math.max(0, (spacer || target).getBoundingClientRect().top + window.scrollY - offset);
   // Lenis gère lui-même le glissement ; le scroll natif lutterait contre lui
   if (lenis) lenis.scrollTo(top);
   else window.scrollTo({ top, behavior: reducedMotion ? 'auto' : 'smooth' });
@@ -300,7 +344,7 @@ const revealObserver = new IntersectionObserver((entries) => {
       revealObserver.unobserve(entry.target);
     }
   });
-}, { threshold: 0.15 });
+}, { threshold: mobileLayout() ? 0.01 : 0.15 });
 const observeReveals = () =>
   document.querySelectorAll('.reveal:not(.in-view)').forEach(el => revealObserver.observe(el));
 

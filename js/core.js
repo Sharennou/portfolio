@@ -124,6 +124,10 @@ const projects = [
   }
 ];
 
+// Les téléphones larges en paysage gardent la mise en page tactile. La seconde
+// condition ne concerne pas les écrans PC, même lorsque leur fenêtre est étroite.
+const mobileLayoutQuery = '(max-width: 859px), (max-width: 999px) and (hover: none) and (pointer: coarse)';
+const desktopLayoutQuery = '(min-width: 860px) and (hover: hover), (min-width: 860px) and (pointer: fine), (min-width: 1000px)';
 const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 const isFinePointer = window.matchMedia('(hover: hover) and (pointer: fine)').matches;
 // Si le CDN est bloqué ou en reduced-motion, le site retombe sur la version native sans animation

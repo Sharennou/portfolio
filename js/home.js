@@ -241,7 +241,7 @@ if (motionOK && fanCards.length) {
   // empilées qui s'écartaient) a été retirée à la demande de l'utilisateur, qui la
   // trouvait trop bloquante. Ne pas la réintroduire — pour rendre l'animation plus
   // visible, augmenter les amplitudes ci-dessous, jamais rajouter `pin: true`.
-  mmFan.add('(min-width: 860px)', () => {
+  mmFan.add(desktopLayoutQuery, () => {
     const mid = (fanCards.length - 1) / 2;
     // offsetLeft ignore les transforms : la mesure ne se contamine pas elle-même
     const deckCenter = () => fanDeck.offsetWidth / 2;
@@ -280,12 +280,12 @@ if (motionOK && fanCards.length) {
   });
 
   // En dessous : les cartes montent simplement quand elles entrent
-  mmFan.add('(max-width: 859px)', () => {
-    const tw = gsap.from(fanCards, {
-      y: 70, autoAlpha: 0, scale: 0.94, duration: 0.8, ease: 'power3.out', stagger: 0.14,
-      scrollTrigger: { trigger: fanDeck, start: 'top 85%', once: true }
-    });
-    return () => { if (tw.scrollTrigger) tw.scrollTrigger.kill(); gsap.set(fanCards, { clearProps: 'all' }); };
+  mmFan.add(mobileLayoutQuery, () => {
+    fanCards.forEach(card => gsap.from(card, {
+      y: 24, autoAlpha: 0, duration: 0.5, ease: 'power3.out',
+      scrollTrigger: { trigger: card, start: 'top 94%', once: true }
+    }));
+    return () => gsap.set(fanCards, { clearProps: 'all' });
   });
 }
 
@@ -421,52 +421,56 @@ document.querySelectorAll('.ab-postcard img').forEach(img => {
 // à gauche pour les impaires. Le texte, lui, reste géré par .reveal — une seule
 // mécanique par élément, jamais les deux sur la même opacité.
 if (motionOK) {
-  gsap.utils.toArray('.ab-row').forEach((row, i) => {
-    const dir = i % 2 === 0 ? 1 : -1;
-    // La carte reste dans le fond ; ses repères s'y fondent, et la photo entre
-    // par la droite. Aucun de ces éléments n'est `.reveal` : une seule mécanique
-    // par élément, et sans GSAP ils sont simplement là, en place, dès le
-    // chargement — la photo comprise, que le CSS pose déjà à sa place finale.
-    if (row.classList.contains('ab-row--map')) {
-      // ⚠ Uniquement l'opacité, jamais un `y` : les libellés sont centrés sur
-      // leur ancre par un `translateX(-50%)` en CSS, et GSAP écrirait son propre
-      // `transform` par-dessus — ils sauteraient d'une demi-largeur vers la droite.
-      const marks = row.querySelectorAll('.ab-map-marks, .ab-map-note');
-      if (marks.length) gsap.fromTo(marks,
-        { autoAlpha: 0 },
-        { autoAlpha: 1, duration: 0.7, ease: 'power2.out', stagger: 0.12,
-          scrollTrigger: { trigger: row, start: 'top 78%', once: true } });
-      // La photo, elle, ENTRE PAR LA DROITE, et son avancée est pilotée par le
-      // défilement (`scrub`) : on la fait venir à la molette, et elle repart si
-      // on remonte. Demande de l'utilisateur ; elle montait de 54px avant.
-      // La droite n'est pas un côté au hasard : c'est celui par lequel la carte
-      // continue déjà hors de l'écran, donc le geste va dans le même sens.
-      //
-      // `xPercent` se lit sur la largeur de la photo. Elle occupe de 65,5 % à
-      // 81 % de l'écran : il faut donc la pousser de 34,5 points d'écran pour
-      // la sortir entièrement, soit ~2,2 fois sa largeur — 240 laisse de la
-      // marge. Ce qui dépasse est coupé par `overflow-x: hidden` sur <body>.
-      //
-      // ⚠ `rotate` doit finir sur l'inclinaison du CSS (`.ab-postcard`, +4°) :
-      // GSAP écrit son propre transform et l'écraserait autrement. Les deux
-      // valeurs vont ensemble, en changer une sans l'autre fait sauter la photo.
-      // ⚠ `ease: 'none'` : sous scrub, une courbe se lirait comme un à-coup,
-      // puisque c'est le scroll qui donne déjà le rythme.
-      const photo = row.querySelector('.ab-postcard');
-      if (photo) gsap.fromTo(photo,
-        { xPercent: 240, rotate: 12 },
+  // Les entrées latérales et le scrub restent propres au grand écran.
+  // matchMedia les retire aussi en passant du PC au téléphone sans recharger.
+  gsap.matchMedia().add(desktopLayoutQuery, () => {
+    gsap.utils.toArray('.ab-row').forEach((row, i) => {
+      const dir = i % 2 === 0 ? 1 : -1;
+      // La carte reste dans le fond ; ses repères s'y fondent, et la photo entre
+      // par la droite. Aucun de ces éléments n'est `.reveal` : une seule mécanique
+      // par élément, et sans GSAP ils sont simplement là, en place, dès le
+      // chargement — la photo comprise, que le CSS pose déjà à sa place finale.
+      if (row.classList.contains('ab-row--map')) {
+        // ⚠ Uniquement l'opacité, jamais un `y` : les libellés sont centrés sur
+        // leur ancre par un `translateX(-50%)` en CSS, et GSAP écrirait son propre
+        // `transform` par-dessus — ils sauteraient d'une demi-largeur vers la droite.
+        const marks = row.querySelectorAll('.ab-map-marks, .ab-map-note');
+        if (marks.length) gsap.fromTo(marks,
+          { autoAlpha: 0 },
+          { autoAlpha: 1, duration: 0.7, ease: 'power2.out', stagger: 0.12,
+            scrollTrigger: { trigger: row, start: 'top 78%', once: true } });
+        // La photo, elle, ENTRE PAR LA DROITE, et son avancée est pilotée par le
+        // défilement (`scrub`) : on la fait venir à la molette, et elle repart si
+        // on remonte. Demande de l'utilisateur ; elle montait de 54px avant.
+        // La droite n'est pas un côté au hasard : c'est celui par lequel la carte
+        // continue déjà hors de l'écran, donc le geste va dans le même sens.
+        //
+        // `xPercent` se lit sur la largeur de la photo. Elle occupe de 65,5 % à
+        // 81 % de l'écran : il faut donc la pousser de 34,5 points d'écran pour
+        // la sortir entièrement, soit ~2,2 fois sa largeur — 240 laisse de la
+        // marge. Ce qui dépasse est coupé par `overflow-x: hidden` sur <body>.
+        //
+        // ⚠ `rotate` doit finir sur l'inclinaison du CSS (`.ab-postcard`, +4°) :
+        // GSAP écrit son propre transform et l'écraserait autrement. Les deux
+        // valeurs vont ensemble, en changer une sans l'autre fait sauter la photo.
+        // ⚠ `ease: 'none'` : sous scrub, une courbe se lirait comme un à-coup,
+        // puisque c'est le scroll qui donne déjà le rythme.
+        const photo = row.querySelector('.ab-postcard');
+        if (photo) gsap.fromTo(photo,
+          { xPercent: 240, rotate: 12 },
+          {
+            xPercent: 0, rotate: 4, ease: 'none',
+            scrollTrigger: { trigger: row, start: 'top 85%', end: 'top 15%', scrub: 0.6 }
+          });
+        return;
+      }
+      gsap.fromTo(row.querySelector('.ab-shot'),
+        { xPercent: 45 * dir, rotate: 6 * dir, autoAlpha: 0 },
         {
-          xPercent: 0, rotate: 4, ease: 'none',
-          scrollTrigger: { trigger: row, start: 'top 85%', end: 'top 15%', scrub: 0.6 }
+          xPercent: 0, rotate: dir * 1.5, autoAlpha: 1, ease: 'none',
+          scrollTrigger: { trigger: row, start: 'top 88%', end: 'top 38%', scrub: 0.6 }
         });
-      return;
-    }
-    gsap.fromTo(row.querySelector('.ab-shot'),
-      { xPercent: 45 * dir, rotate: 6 * dir, autoAlpha: 0 },
-      {
-        xPercent: 0, rotate: dir * 1.5, autoAlpha: 1, ease: 'none',
-        scrollTrigger: { trigger: row, start: 'top 88%', end: 'top 38%', scrub: 0.6 }
-      });
+    });
   });
 }
 

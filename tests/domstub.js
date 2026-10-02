@@ -16,7 +16,8 @@ var listeners = [];
 function El(id) {
   return {
     id: id || '', hidden: false, textContent: '', innerHTML: '', dataset: {},
-    style: { transform: '' }, children: [], offsetLeft: 0, offsetWidth: 100, offsetTop: 0,
+    style: { transform: '', setProperty(k, v){ this[k] = v; }, removeProperty(k){ delete this[k]; } },
+    children: [], offsetLeft: 0, offsetWidth: 100, offsetHeight: 56, offsetTop: 0,
     classList: { add(){}, remove(){}, toggle(){}, contains(){ return false; } },
     addEventListener(t){ listeners.push(t); }, removeEventListener(){},
     setAttribute(){}, removeAttribute(){}, getAttribute(){ return '#x'; },
