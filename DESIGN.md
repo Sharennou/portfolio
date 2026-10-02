@@ -3,9 +3,9 @@
 ## Responsive du 2 octobre 2026
 
 - Le rendu PC est conservé à partir de 860px. Les nouvelles règles s'appliquent sous 860px et aux écrans tactiles sans survol jusqu'à 999px, pour les téléphones en paysage. Les conditions CSS et GSAP partagent ces mêmes limites.
-- Les marges tiennent compte des encoches avec `viewport-fit=cover` et les safe areas. Le titre animé tient même à 320px ; le portrait et les espacements sont réduits sur téléphone. En paysage, texte et portrait passent côte à côte.
+- Les marges tiennent compte des encoches avec `viewport-fit=cover` et les safe areas. Sur téléphone, le petit portrait reste à droite du titre d'accueil ; le paragraphe et le bouton occupent toute la largeur dessous. Le titre animé tient même à 320px, en portrait comme en paysage.
 - La capsule du menu reste centrée et conserve le CV. Les actions mesurent au moins 44px de haut. Le panneau défile dans la hauteur disponible ; le défilement de la page est bloqué et sa position est restaurée à la fermeture. Le menu fonctionne aussi sans GSAP et en réduction de mouvement.
-- Les noms des onze outils sont toujours visibles dans une grille, sans effet de dock. Sur téléphone, la photo de Bretagne fait 80 à 120px de large et flotte à droite du récit ; le texte retrouve toute sa largeur sous elle. GSAP la fait entrer par la droite au défilement, avec une course réduite, puis la repose à 4°. Le placement et l'animation PC sont conservés ; sans GSAP ou en réduction de mouvement, la photo reste visible. Le collage des passions utilise deux colonnes (trois en paysage), avec les proportions des photos conservées.
+- Sur téléphone, les onze outils sont en grille, sans effet de dock. Leur nom apparaît au clic ou au toucher sur le logo ; un second clic le masque et sélectionner un autre outil ferme le précédent. Les boutons restent utilisables au clavier. La photo de Bretagne reste superposée à la carte, y compris sur téléphone, où elle occupe 33 % de sa largeur avec un plafond de 150px. GSAP la fait entrer par la droite au défilement de la carte, avec une course réduite, puis la repose à 4°. Le placement et l'animation PC sont conservés ; sans GSAP ou en réduction de mouvement, la photo reste visible. Le collage des passions utilise deux colonnes (trois en paysage), avec les proportions des photos conservées.
 - Les expériences et la formation présentent logo, intitulé, période et bouton d'ouverture en une colonne. Les détails utilisent toute la largeur disponible. Les pages projet, les affiches et le contact sont adaptés à la lecture et au tactile.
 - Les changements de hauteur dus aux barres du navigateur ne ferment pas le menu. Une rotation qui change la largeur le ferme ; GSAP retire et recrée les animations réservées au PC lors du passage d'un format à l'autre.
 
@@ -156,7 +156,7 @@ Trois mécanismes d'apparition distincts, à ne pas mélanger :
 
      Au repos la frise fait 874px de large pour 1054px disponibles, 924px au survol du milieu. En remontant `--zoom` vers 2, on arrive à 998px : ça passe encore, mais ajouter un outil imposera de revérifier, ou de réduire `--tw`.
 
-     Une étiquette apparaît sous la tuile survolée avec le nom de l'outil. L'étiquette est **toujours dans le DOM** — elle n'est masquée que visuellement — et repasse dans le flux, visible en permanence, sous `(hover: none)` : sans ça l'information disparaîtrait au doigt et pour les lecteurs d'écran. Les tuiles n'étant pas cliquables, il n'y a rien à mettre en `<button>`.
+     Le nom apparaît sous le logo au clic ou au toucher, puis disparaît au second clic ou à la sélection d'un autre outil. Chaque tuile est un bouton natif avec le nom comme libellé accessible, `aria-expanded` et `aria-controls`. Sur tactile, l'étiquette réserve sa place dans le flux pour éviter les déplacements ; sur PC, elle reste positionnée sous la tuile. L'agrandissement au survol reste géré par CSS.
 
      **Les onze logos sont de vrais fichiers**, fournis par l'utilisateur et rangés dans `img/outils/` (Affinity, Figma, After Effects, Photoshop, Premiere Pro, DaVinci Resolve, Blender, VS Code, Claude, HTML, CSS — dans cet ordre).
 

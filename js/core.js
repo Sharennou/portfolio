@@ -321,7 +321,7 @@ const shotMarkup = (a) => a.img
 const jobs = [
   {
     logo: 'img/Mcdonalds.webp', mono: 'MCD',
-    role: 'Équipier polyvalent', org: "McDonald's", city: 'Lannion (22)',
+    role: 'Équipier polyvalent', org: "McDonald's", city: '',
     when: '2026 · 1 mois',
     text: "Poste en cuisine sur des services à flux tendu. J'y ai appris à tenir une position précise dans une équipe qui ne s'arrête jamais, et à garder la qualité même dans le rush.",
     tags: ['Travail en équipe', 'Rythme soutenu', 'Gestion du stress']

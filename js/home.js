@@ -292,9 +292,8 @@ if (motionOK && fanCards.length) {
 // ============================= À PROPOS : FRISE D'OUTILS =============================
 // Le titre est coupé en deux et la frise s'installe au milieu — la ligne du haut
 // est calée à gauche, celle du bas à droite, comme dans la référence donnée par
-// l'utilisateur. Le nom de l'outil est TOUJOURS dans le DOM (il n'apparaît au
-// survol que visuellement) : sans ça, il serait invisible aux lecteurs d'écran,
-// et sur écran tactile, où il n'y a pas de survol, le CSS le montre en permanence.
+// l'utilisateur. Chaque logo est un bouton : son nom apparaît au clic,
+// au toucher ou avec Entrée / Espace. Un seul nom reste ouvert à la fois.
 const toolBelt = document.getElementById('toolBelt');
 
 if (toolBelt) {
@@ -303,13 +302,24 @@ if (toolBelt) {
     <ul class="tools-row">
       ${tools.map((t, i) => `
         <li class="tool reveal" style="--d:${(0.04 * i).toFixed(2)}s">
-          <span class="tool-tile" data-mono="${t.mono}" aria-hidden="true">${
+          <button type="button" class="tool-tile" data-mono="${t.mono}" aria-label="${t.name}" aria-expanded="false" aria-controls="toolName${i}">${
             t.logo ? `<img src="${t.logo}" alt="" loading="lazy">` : `<span class="tool-mono">${t.mono}</span>`
-          }</span>
-          <span class="tool-name">${t.name}</span>
+          }</button>
+          <span class="tool-name" id="toolName${i}">${t.name}</span>
         </li>`).join('')}
     </ul>
     <p class="tools-line tools-line-b reveal" style="--d:0.1s">vos idées.</p>`;
+
+  toolBelt.querySelectorAll('.tool-tile').forEach(button => {
+    button.addEventListener('click', () => {
+      const open = button.getAttribute('aria-expanded') !== 'true';
+      toolBelt.querySelectorAll('.tool-tile').forEach(other => {
+        const active = other === button && open;
+        other.setAttribute('aria-expanded', String(active));
+        other.closest('.tool').classList.toggle('is-active', active);
+      });
+    });
+  });
 }
 
 // L'agrandissement des tuiles au survol est ENTIÈREMENT en CSS (voir .tool:hover
@@ -417,22 +427,6 @@ document.querySelectorAll('.ab-postcard img').forEach(img => {
   else img.addEventListener('error', drop);
 });
 
-// Un seul tirage : sur téléphone, il accompagne le récit à droite plutôt que
-// de recouvrir la carte. Le replacer dans la scène conserve le cadrage PC.
-const aboutPhotoMedia = window.matchMedia(mobileLayoutQuery);
-const placeAboutPhotos = () => {
-  document.querySelectorAll('.ab-row--map').forEach(row => {
-    const photo = row.querySelector('.ab-postcard');
-    const scene = row.querySelector('.ab-map-scene');
-    const copy = row.querySelector('.ab-copy');
-    if (!photo || !scene || !copy) return;
-    if (aboutPhotoMedia.matches) copy.insertBefore(photo, copy.firstChild);
-    else scene.appendChild(photo);
-  });
-};
-placeAboutPhotos();
-aboutPhotoMedia.addEventListener('change', placeAboutPhotos);
-
 // L'image entre par le côté où elle se trouve : à droite pour les lignes paires,
 // à gauche pour les impaires. Le texte, lui, reste géré par .reveal — une seule
 // mécanique par élément, jamais les deux sur la même opacité.
@@ -492,13 +486,15 @@ if (motionOK) {
     gsap.utils.toArray('.ab-row--map').forEach(row => {
       const photo = row.querySelector('.ab-postcard');
       if (!photo) return;
+      // Le tirage reste au-dessus de la carte : son entrée suit la scène,
+      // avec une course plus courte que sur PC et la même inclinaison finale.
       gsap.fromTo(photo,
-        { xPercent: 100, rotate: 12, autoAlpha: 0 },
+        { xPercent: 150, rotate: 12 },
         {
-          xPercent: 0, rotate: 4, autoAlpha: 1, ease: 'none',
+          xPercent: 0, rotate: 4, ease: 'none',
           scrollTrigger: {
-            trigger: row.querySelector('.ab-copy'),
-            start: 'top 90%', end: 'top 60%', scrub: 0.3
+            trigger: row.querySelector('.ab-map-scene'),
+            start: 'top 85%', end: 'top 35%', scrub: 0.3
           }
         });
     });
@@ -548,7 +544,7 @@ jobList.innerHTML = jobs.map((j, i) => `
       <summary class="job-summary">
         <span class="job-index" aria-hidden="true">${pad(i + 1)}</span>
         <span class="job-logo" data-mono="${j.mono}">${jobLogo(j)}</span>
-        <span class="job-summary-copy"><span class="job-role">${j.role}</span><span class="job-org">${j.org} · ${j.city}</span></span>
+        <span class="job-summary-copy"><span class="job-role">${j.role}</span><span class="job-org">${j.org}${j.city ? ` · ${j.city}` : ''}</span></span>
         <span class="job-when"><span class="job-year">${j.when.split(' · ')[0]}</span><span class="job-duration">${j.when.split(' · ').slice(1).join(' · ')}</span></span>
         <span class="entry-toggle" aria-hidden="true">+</span>
       </summary>
