@@ -813,7 +813,7 @@ main section[id]:focus { outline: none; }
 .about {
   position: relative;
   background: var(--paper);
-  padding: 8rem 0;
+  padding: 4rem 0 8rem;
 }
 .about::before {
   content: '';
@@ -967,7 +967,7 @@ main section[id]:focus { outline: none; }
 .xp {
   background: var(--paper);
   color: var(--ink);
-  padding: var(--section-space) 0;
+  padding: calc(var(--section-space) - 4rem) 0 var(--section-space);
 }
 .xp-head { display: block; margin-bottom: clamp(2rem, 4vw, 3rem); }
 .xp-creative-head { width: 100%; }
@@ -2309,7 +2309,7 @@ html.lenis, html.lenis body { height: auto; }
   .pcard .pc-media { aspect-ratio: 16 / 9; min-height: 0; }
   .pcard-short { font-size: 0.95rem; line-height: 1.65; }
 
-  .about, .xp { padding: var(--section-space) 0; }
+  .about, .xp { padding: calc(var(--section-space) - 2rem) 0 var(--section-space); }
   /* L'entrée de la photo reste dans la largeur de la section, sans agrandir
      la fenêtre mobile pendant qu'elle arrive depuis la droite. */
   .about { overflow-x: clip; }
