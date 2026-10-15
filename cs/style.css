@@ -777,9 +777,7 @@ main section[id]:focus { outline: none; }
 }
 .dark .section-note { color: var(--ash); }
 
-/* En-tête éditorial commun aux blocs de profil : une ligne tendue, un petit
-   cartouche et une composition asymétrique. Il relie les sections sans leur
-   imposer exactement la même mise en page. */
+/* En-tête commun aux blocs de profil, sans ligne ni signe décoratif. */
 .creative-head {
   position: relative;
   display: grid;
@@ -788,22 +786,6 @@ main section[id]:focus { outline: none; }
   gap: 1.2rem clamp(2rem, 6vw, 6rem);
   align-items: end;
   padding-top: clamp(1.4rem, 2.5vw, 2rem);
-  border-top: 1px solid var(--line-dark);
-}
-.creative-head::after {
-  content: '+';
-  position: absolute;
-  top: -0.78rem;
-  right: 0;
-  width: 1.5rem;
-  height: 1.5rem;
-  display: grid;
-  place-items: center;
-  background: var(--paper);
-  color: var(--accent-text);
-  font-family: var(--font-display);
-  font-size: 1.05rem;
-  font-weight: 700;
 }
 .creative-chip {
   grid-area: chip;
