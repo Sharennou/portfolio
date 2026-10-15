@@ -331,7 +331,7 @@ const jobs = [
     logo: 'img/maison cadiou.webp', mono: 'MC',
     role: 'Stagiaire communication', org: 'Maison Cadiou', city: 'Locronan (29)',
     when: '2026 · 11 semaines',
-    text: "Gestion des contenus de la marque : création de visuels, tournage et montage de vidéos, publication et suivi sur les réseaux sociaux. Mon stage le plus long et le plus complet côté production.",
+    text: "J’ai créé des visuels, filmé et monté des vidéos, puis publié des contenus sur les réseaux sociaux de la marque. Ce stage m’a permis de participer à toutes les étapes, de la création à la publication.",
     tags: ['Création de visuels', 'Montage vidéo', 'Réseaux sociaux', 'Adobe']
   },
   {
@@ -345,21 +345,21 @@ const jobs = [
     logo: 'img/isitix.webp', mono: 'IX',
     role: 'Stagiaire machine learning', org: 'Isitix', city: 'Lannion (22)',
     when: '2024 · 2 mois',
-    text: "Participation au développement d'un vêtement connecté piloté à la voix : traitement du signal, tests de reconnaissance et itérations avec l'équipe technique jusqu'au prototype.",
+    text: "J’ai aidé l’équipe à créer un vêtement connecté qui réagit à la voix. J’ai travaillé sur les sons reçus par le système, testé la reconnaissance de la voix et amélioré les premiers essais avec l’équipe.",
     tags: ['Machine learning', 'Python', 'Traitement du signal', 'Prototypage']
   },
   {
     logo: 'img/ecocompteur.webp', mono: 'EC',
     role: 'Stagiaire', org: 'Éco-compteur', city: 'Lannion (22)',
     when: '2023 · 1 mois',
-    text: "Conception d'un système de comptage et d'analyse des flux de mobilité urbaine, pensé pour aider les collectivités à comprendre les déplacements sur leur territoire.",
+    text: "J’ai travaillé sur un système qui compte les passages et analyse les déplacements en ville. L’objectif était d’aider les communes à mieux comprendre comment les gens se déplacent.",
     tags: ['Capteurs de comptage', 'Traitement de données', 'Mobilité urbaine']
   },
   {
     logo: 'img/cirisi.webp', mono: 'CIR',
     role: 'Stagiaire technique', org: 'CIRISI / CSS Kerambrun', city: 'Lannion (22)',
     when: '2023 · 2 mois',
-    text: "Maintenance informatique et réseaux au quotidien, puis installation et raccordement de systèmes électriques. Ma première vraie immersion dans un service technique.",
+    text: "J’ai participé à l’entretien des ordinateurs et du réseau informatique, ainsi qu’à l’installation et au branchement d’équipements électriques. C’était ma première expérience dans une équipe technique.",
     tags: ['Maintenance IT', 'Réseaux', 'Électricité']
   }
 ];

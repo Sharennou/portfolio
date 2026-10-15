@@ -557,7 +557,8 @@ jobList.innerHTML = jobs.map((j, i) => `
 `).join('');
 
 // Les résumés restent natifs et utilisables sans GSAP. Avec GSAP, l'ouverture
-// suit le sens de lecture et une seule ligne par groupe reste développée.
+// suit le sens de lecture. Chaque expérience peut rester ouverte indépendamment.
+// La formation conserve une seule ligne ouverte à la fois.
 if (motionOK) {
   document.querySelectorAll('.job, .edu-item').forEach(entry => {
     const summary = entry.querySelector('summary');
@@ -565,8 +566,9 @@ if (motionOK) {
     summary.addEventListener('click', event => {
       event.preventDefault();
       const wasOpen = entry.open;
-      const group = entry.classList.contains('job') ? '.job' : '.edu-item';
-      document.querySelectorAll(`${group}[open]`).forEach(other => {
+      const others = entry.classList.contains('job')
+        ? [] : document.querySelectorAll('.edu-item[open]');
+      others.forEach(other => {
         if (other === entry) return;
         const otherDetail = other.querySelector('.job-detail, .edu-detail');
         gsap.killTweensOf(otherDetail);
