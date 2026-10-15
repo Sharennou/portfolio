@@ -324,7 +324,7 @@ const jobs = [
     logo: 'img/Mcdonalds.webp', mono: 'MCD',
     role: 'Équipier polyvalent', org: "McDonald's", city: '',
     when: '2026 · 1 mois',
-    text: "Poste en cuisine sur des services à flux tendu. J'y ai appris à tenir une position précise dans une équipe qui ne s'arrête jamais, et à garder la qualité même dans le rush.",
+    text: "J’étais en cuisine, au poste des produits frits et à la préparation des burgers. J’y ai appris à travailler en équipe et à garder la qualité même quand il y avait beaucoup de commandes.",
     tags: ['Travail en équipe', 'Rythme soutenu', 'Gestion du stress']
   },
   {
@@ -338,7 +338,7 @@ const jobs = [
     logo: 'img/startpeople.png', mono: 'INT',
     role: "Missions d'intérim", org: 'Usine, ménage, mise en rayon', city: 'Bretagne',
     when: '2025 · missions courtes',
-    text: "Plusieurs missions courtes enchaînées pendant l'été. Chaque poste demandait d'être opérationnel en quelques heures — une bonne école de l'adaptation.",
+    text: "Plusieurs missions courtes enchaînées pendant l'été. Chaque poste demandait d'être opérationnel en quelques heures.",
     tags: ['Adaptabilité', 'Autonomie', 'Polyvalence']
   },
   {
