@@ -11,19 +11,11 @@ const projectIndex = projects.findIndex(p => p.slug === wantedSlug);
 // de quelques secondes, pas un film. Sous `prefers-reduced-motion` on ne la lance
 // pas tout seul et on rend les commandes, pour que rien ne bouge sans qu'on le
 // demande — même règle que partout ailleurs sur le site.
-function youtubeConsentMarkup(p) {
-  return `<div class="video-consent">
-    <p>Vidéo YouTube désactivée.</p>
-    <button type="button" class="btn btn-outline" data-cookie-open>Choisir les cookies</button>
-    <a class="video-consent-link" href="https://www.youtube.com/watch?v=${p.video.youtube}" target="_blank" rel="noopener noreferrer">Voir sur YouTube ↗</a>
-  </div>`;
-}
-
 function projectMedia(p) {
   if (p.video) {
     if (p.video.youtube) {
       return `<div class="pd-media pd-media--youtube reveal">
-        ${youtubeConsentMarkup(p)}
+        <iframe class="pd-video" src="https://www.youtube-nocookie.com/embed/${p.video.youtube}" title="${p.video.alt}" loading="lazy" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe>
       </div>`;
     }
     const auto = reducedMotion ? 'controls' : 'autoplay loop muted playsinline';
@@ -93,27 +85,6 @@ if (projectIndex === -1) {
       <span><small>Projet suivant</small><strong>${next.card.name}</strong></span>
       <span aria-hidden="true">→</span>
     </a>`;
-}
-
-// Le lecteur n'existe qu'après accord ; retirer l'accord le remplace aussitôt
-// par le choix local, sans requête YouTube ni miniature distante au préalable.
-if (projectIndex !== -1 && projects[projectIndex].video && projects[projectIndex].video.youtube) {
-  const youtubeMedia = projectPage.querySelector('.pd-media--youtube');
-  const p = projects[projectIndex];
-  if (youtubeMedia) {
-    const updateYouTube = () => {
-      if (cookieConsent.allowsYouTube()) {
-        if (youtubeMedia.querySelector('iframe')) return;
-        youtubeMedia.innerHTML = `<iframe class="pd-video" src="https://www.youtube-nocookie.com/embed/${p.video.youtube}" title="${p.video.alt}" loading="lazy" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe>`;
-      } else {
-        youtubeMedia.innerHTML = youtubeConsentMarkup(p);
-        const button = youtubeMedia.querySelector('[data-cookie-open]');
-        if (button) button.addEventListener('click', () => cookieConsent.open(button));
-      }
-    };
-    updateYouTube();
-    document.addEventListener('cookie-choice-change', updateYouTube);
-  }
 }
 
 // ============================= AFFICHES : VUE AGRANDIE =============================

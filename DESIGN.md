@@ -1,16 +1,14 @@
 # Design — Portfolio
 
-## Bannière cookies
+## Vidéos YouTube
 
-- Petite carte en bas à gauche, sans fond assombri ni blocage du défilement. « Refuser » et « Accepter » ont la même présentation. La croix ferme la première demande en conservant les vidéos désactivées ; lors d'une réouverture, elle conserve le choix existant.
-- Le refus et l'accord sont mémorisés pendant 180 jours dans `localStorage` (`ylb-cookie-choice`). Le bouton « Cookies » du pied de page permet de modifier le choix sur les cinq pages. Le site reste utilisable si le stockage est indisponible.
-- Seules les vidéos YouTube sont optionnelles : aucun lecteur ni miniature distante avant acceptation. Le cadre propose les préférences ou un lien vers YouTube. Retirer l'accord supprime le lecteur, y compris dans les autres onglets ouverts. Aucun focus imposé à l'arrivée ; un choix ouvert explicitement reste utilisable au clavier, avec retour au bouton ou à la vidéo.
+Les lecteurs sont intégrés directement via `youtube-nocookie.com`, sans lecture automatique. Le système de préférences a été supprimé à la demande de l’utilisateur : aucune bannière, aucun bouton de réglages ni choix enregistré dans le navigateur.
 
 ## Affiches et pages légales
 
 Les deux affiches de rappeurs portent une légende visible et une description alternative. Un clic ouvre leur image originale dans un `<dialog>` natif : commandes de zoom ×2 et de fermeture, image défilable au tactile, fermeture par Échap ou par clic sur le fond. La page conserve sa position derrière la vue agrandie. Sans prise en charge du dialogue, les liens ouvrent directement l'image.
 
-La vidéo de Paris (`Qtteu5kizCw`) suit le même choix de cookies que Kostum, sans lecture automatique. Les pages `rgpd.html` et `cgu.html` reprennent les polices, les couleurs et le menu du portfolio, avec une colonne de lecture de 760 px maximum. Elles sont accessibles depuis le pied de page de chacune des cinq pages ; la bannière comporte aussi un lien vers la confidentialité.
+La vidéo de Paris (`Qtteu5kizCw`) utilise le même lecteur intégré que Kostum, sans lecture automatique. Les pages `rgpd.html` et `cgu.html` reprennent les polices, les couleurs et le menu du portfolio, avec une colonne de lecture de 760 px maximum. Elles sont accessibles depuis le pied de page de chacune des cinq pages.
 
 ## Responsive du 2 octobre 2026
 

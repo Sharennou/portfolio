@@ -1081,7 +1081,6 @@ main section[id]:focus { outline: none; }
 .foot-legal { display: flex; flex-wrap: wrap; justify-content: flex-end; align-items: center; gap: 0.75rem; }
 .foot-legal a { display: inline-flex; align-items: center; min-height: 44px; color: var(--muted); font-size: 0.75rem; letter-spacing: normal; text-transform: none; text-decoration: underline; text-underline-offset: 0.2em; }
 .foot-legal a:hover { color: var(--ink); }
-.foot-legal .cookie-settings { margin-left: 0; }
 .foot-links {
   display: flex;
   flex-wrap: wrap;
@@ -1099,74 +1098,6 @@ main section[id]:focus { outline: none; }
   transition: background 0.25s ease;
 }
 .foot-links a:hover { background: var(--muted-tint); }
-
-/* ============================= COOKIES : CARTE DISCRÈTE, SANS MODALE ============================= */
-.cookie-settings {
-  display: inline-flex;
-  align-items: center;
-  min-height: 44px;
-  margin-left: 0.75rem;
-  color: var(--muted);
-  font-size: 0.75rem;
-  letter-spacing: normal;
-  text-transform: none;
-  text-decoration: underline;
-  text-underline-offset: 0.2em;
-  cursor: pointer;
-}
-.cookie-settings:hover { color: var(--ink); }
-.cookie-banner {
-  position: fixed;
-  z-index: 950;
-  left: max(1rem, env(safe-area-inset-left, 0px));
-  bottom: calc(1rem + env(safe-area-inset-bottom, 0px));
-  width: min(400px, calc(100vw - 2rem - env(safe-area-inset-left, 0px) - env(safe-area-inset-right, 0px)));
-  max-height: calc(100dvh - 2rem - env(safe-area-inset-top, 0px) - env(safe-area-inset-bottom, 0px));
-  overflow-y: auto;
-  overscroll-behavior: contain;
-  padding: 1rem;
-  border: 1px solid var(--muted-line);
-  border-radius: 18px;
-  background: var(--paper-dim);
-  color: var(--ink);
-  box-shadow: 0 8px 32px rgba(3,6,13,0.25);
-}
-.cookie-banner[hidden], .cookie-settings[hidden] { display: none; }
-.cookie-banner h2 {
-  padding-right: 2.5rem;
-  font-family: var(--font-display);
-  font-size: 0.9rem;
-  font-weight: 700;
-  line-height: 1.4;
-}
-.cookie-banner p { margin-top: 0.65rem; color: var(--muted); font-size: 0.82rem; line-height: 1.55; }
-.cookie-policy { color: var(--ink); text-decoration: underline; text-underline-offset: 0.2em; }
-.cookie-dismiss {
-  position: absolute;
-  top: 4px;
-  right: 4px;
-  width: 44px;
-  height: 44px;
-  border-radius: 50%;
-  color: var(--muted);
-  font-size: 1.4rem;
-  cursor: pointer;
-}
-.cookie-dismiss:hover { background: var(--muted-tint); color: var(--ink); }
-.cookie-actions { display: flex; gap: 0.5rem; margin-top: 0.9rem; }
-.cookie-actions button {
-  flex: 1;
-  min-height: 44px;
-  padding: 0.6rem 0.75rem;
-  border: 1px solid var(--muted-line);
-  border-radius: 100px;
-  background: transparent;
-  color: var(--ink);
-  font-size: 0.85rem;
-  font-weight: 600;
-  cursor: pointer;
-}
-.cookie-actions button:hover { background: var(--muted-tint); }
 
 /* ============================= PROJECT DETAIL ============================= */
 html.is-locked { overflow: hidden; }
@@ -2028,10 +1959,6 @@ html.lenis, html.lenis body { height: auto; }
    image de couverture. `contain` et non `cover` : un logo rogné n'a plus de sens,
    et le fond sombre du cadre fait office de marge. */
 .pd-video { width: 100%; height: 100%; object-fit: contain; display: block; border: 0; }
-.video-consent { display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 0.25rem; height: 100%; padding: 0.75rem; text-align: center; }
-.video-consent p { color: var(--ash-dark); font-size: 0.9rem; line-height: 1.4; }
-.video-consent .btn { min-height: 44px; padding: 0.6rem 1rem; font-size: 0.8rem; }
-.video-consent-link { display: inline-flex; align-items: center; min-height: 44px; color: var(--blue-light); font-size: 0.8rem; text-decoration: underline; text-underline-offset: 0.2em; }
 
 /* Plusieurs visuels côte à côte, à la place du cadre unique — pour un projet qui
    en compte plusieurs (les affiches). La grille s'ajuste au nombre d'entrées de
