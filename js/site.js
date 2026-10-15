@@ -15,13 +15,14 @@ const lockScroll = (on) => {
     document.body.style.setProperty('--locked-scroll-y', `${-lockedMobileY}px`);
   }
   document.documentElement.classList.toggle('is-locked', on);
-  // sans ça, la page continue de glisser derrière le menu ouvert
-  if (lenis) on ? lenis.stop() : lenis.start();
+  if (on && lenis) lenis.stop();
   if (!on && lockedMobileY !== null) {
     document.body.style.removeProperty('--locked-scroll-y');
     window.scrollTo({ top: lockedMobileY, behavior: 'instant' });
     lockedMobileY = null;
   }
+  // Reprendre après avoir rendu au body sa position et restauré le scroll.
+  if (!on && lenis) lenis.start();
 };
 
 const navLogo = document.getElementById('navLogo');
@@ -174,13 +175,6 @@ menu.addEventListener('click', (e) => {
   const link = e.target.closest('.menu-link');
   if (!link) return;
   closeMenu({ restoreFocus: false });
-  // le focus suit la navigation, sinon il resterait sur un lien masqué
-  const href = link.getAttribute('href');
-  const target = href.startsWith('#') ? document.querySelector(href) : null;
-  if (target) {
-    target.setAttribute('tabindex', '-1');
-    target.focus({ preventScroll: true });
-  }
 });
 // Il n'y a plus de voile à cliquer : c'est le document qui referme, dès qu'on
 // clique ailleurs que dans la capsule.
@@ -235,12 +229,26 @@ document.addEventListener('click', (e) => {
     return;
   }
   e.preventDefault();
-  const spacer = target.parentElement.classList.contains('pin-spacer') ? target.parentElement : null;
-  const offset = mobileLayout() ? parseFloat(getComputedStyle(target).scrollMarginTop) || 0 : 0;
-  const top = Math.max(0, (spacer || target).getBoundingClientRect().top + window.scrollY - offset);
-  // Lenis gère lui-même le glissement ; le scroll natif lutterait contre lui
-  if (lenis) lenis.scrollTo(top);
-  else window.scrollTo({ top, behavior: reducedMotion ? 'auto' : 'smooth' });
+  // Attendre que la fermeture du menu ait rendu sa position au body mobile.
+  // Un scroll natif de restauration peut sinon annuler celui de Lenis.
+  requestAnimationFrame(() => {
+    const spacer = target.parentElement.classList.contains('pin-spacer') ? target.parentElement : null;
+    const offset = mobileLayout() ? parseFloat(getComputedStyle(target).scrollMarginTop) || 0 : 0;
+    const top = href === '#accueil' ? 0
+      : Math.max(0, (spacer || target).getBoundingClientRect().top + window.scrollY - offset);
+    const focusTarget = () => {
+      target.setAttribute('tabindex', '-1');
+      target.focus({ preventScroll: true });
+    };
+    if (lenis) {
+      lenis.resize();
+      lenis.scrollTo(top, { force: true, onComplete: focusTarget });
+    } else {
+      window.scrollTo({ top, behavior: reducedMotion ? 'auto' : 'smooth' });
+      focusTarget();
+    }
+    if (location.hash !== href) history.pushState(null, '', href);
+  });
 });
 
 // active link on scroll — uniquement les liens internes à la page en cours.
@@ -363,14 +371,13 @@ const cookieConsent = (() => {
     document.addEventListener('keydown', event => {
       if (event.key === 'Escape' && !banner.hidden && banner.contains(document.activeElement)) close();
     });
-    if (choice === null) open();
+    // Le consentement est demandé seulement au clic sur une vidéo ou sur Cookies.
   }
   // Un refus dans un autre onglet retire aussi les lecteurs déjà chargés ici.
   window.addEventListener('storage', event => {
     if (event.key !== storageKey && event.key !== null) return;
     choice = readChoice();
-    if (choice === null) open();
-    else if (banner) banner.hidden = true;
+    if (banner) banner.hidden = true;
     notify();
   });
 
