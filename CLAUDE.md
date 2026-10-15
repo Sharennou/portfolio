@@ -104,7 +104,7 @@ Attention aussi aux **dépendances entre blocs** : en supprimant la vue plein é
 
 ## Cache du navigateur
 
-Les liens vers `cs/style.css` et `js/*.js` portent un numéro de version (actuellement `?v=20261015d`) dans **les cinq pages**. **Après chaque modification d'un fichier CSS ou JS, changer ce numéro partout** (même valeur dans `index.html`, `projets.html`, `projet.html`, `rgpd.html` et `cgu.html`). Sans ça, le navigateur peut garder l'ancien fichier en mémoire alors que le HTML est à jour : la page mélange ancien et nouveau code, et l'utilisateur voit un rendu cassé qui n'existe pas dans les fichiers — c'est arrivé avec les cartes des projets phares, dont le texte était recouvert.
+Les liens vers `cs/style.css` et `js/*.js` portent un numéro de version (actuellement `?v=20261015e`) dans **les cinq pages**. **Après chaque modification d'un fichier CSS ou JS, changer ce numéro partout** (même valeur dans `index.html`, `projets.html`, `projet.html`, `rgpd.html` et `cgu.html`). Sans ça, le navigateur peut garder l'ancien fichier en mémoire alors que le HTML est à jour : la page mélange ancien et nouveau code, et l'utilisateur voit un rendu cassé qui n'existe pas dans les fichiers — c'est arrivé avec les cartes des projets phares, dont le texte était recouvert.
 
 ## Vérifier avant de livrer
 

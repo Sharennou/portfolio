@@ -2310,6 +2310,7 @@ html.lenis, html.lenis body { height: auto; }
 
   .fan { padding: var(--section-space) 0 calc(var(--section-space) + 0.5rem); }
   .fan-deck { flex-direction: column; gap: 1.5rem; }
+  .fan-card.is-lead { order: -1; }
   .fan-card { flex: 0 0 auto; box-shadow: 5px 5px 0 rgba(42,98,240,0.28); }
   .fan-link, .pcard { padding: 0.5rem; }
   .fan-info, .pcard-info { padding: 1.1rem 0.7rem 0.65rem; }
