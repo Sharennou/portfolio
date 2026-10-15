@@ -513,7 +513,7 @@ const pasStage = document.getElementById('pasStage');
 
 if (pasStage) {
   pasStage.innerHTML = passionShots.map(s => `
-    <figure class="pas-shot ${s.img ? '' : s.art}"
+    <figure class="pas-shot${s.mobileOnly ? ' pas-shot--mobile' : ''} ${s.img ? '' : s.art}"
             style="--x:${s.x}; --y:${s.y}; --w:${s.w}; --ar:${s.ar}; --tilt:${s.tilt}">
       ${s.img
         ? `<img src="${s.img}" alt="${s.alt}" loading="lazy">`

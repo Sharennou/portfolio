@@ -150,7 +150,7 @@ const cardLogo = (p) => p.card.logo ? `<img src="${p.card.logo}" alt="">` : p.ma
 // Même identité de projet sur l'accueil, la galerie et la fiche.
 const cardMeta = (p) => `<span class="pc-top"><span class="pc-name">${p.card.name}</span><span class="pc-kind">${cardKind(p)}</span></span>`;
 // La discipline et la flèche forment le pied commun des cartes cliquables.
-const cardFooter = (p) => `<span class="pc-footer"><span class="pc-disc">${p.card.discipline}</span><span class="pc-arrow" aria-hidden="true">↗</span></span>`;
+const cardFooter = (p) => `<span class="pc-footer"><span class="pc-disc">${p.card.discipline}</span></span>`;
 const artMarkup = (p) => `<span class="pj-art ${p.art}"><span class="pj-art-layer"></span><span class="pj-mark">${p.mark}</span><span class="pj-glow"></span></span>`;
 
 // Lettres découpées pour l'animation, texte intact pour les lecteurs d'écran
@@ -306,7 +306,8 @@ const passionShots = [
   { img: 'img/passions/passion-5.webp', alt: 'Vue de Paris et de la tour Eiffel au soir',  label: 'Paris',            art: 'art-motion',   mark: '05', x: '45%', y: '48%', w: '230px', ar: '562/1000',  tilt: '5deg'  },
   { img: 'img/passions/passion-6.webp', alt: 'Voitures sportives lors d’un rassemblement', label: 'Automobile',       art: 'art-web',      mark: '06', x: '80%', y: '59%', w: '245px', ar: '3/4',       tilt: '-5deg' },
   { img: 'img/passions/passion-7.webp', alt: 'Photo de groupe d’une équipe de football',   label: 'Football',         art: 'art-poster',   mark: '07', x: '18%', y: '72%', w: '340px', ar: '250/131',   tilt: '3deg'  },
-  { img: 'img/passions/passion-8.webp', alt: 'Promenade nocturne dans une rue de Paris',   label: 'Virées nocturnes', art: 'art-mobility', mark: '08', x: '64%', y: '84%', w: '250px', ar: '3/4',       tilt: '-4deg' }
+  { img: 'img/passions/passion-8.webp', alt: 'Promenade nocturne dans une rue de Paris',   label: 'Virées nocturnes', art: 'art-mobility', mark: '08', x: '64%', y: '84%', w: '250px', ar: '3/4',       tilt: '-4deg' },
+  { img: 'img/passions/repas.jpeg', alt: 'Repas', label: 'Repas', mobileOnly: true, x: '0%', y: '0%', w: '250px', ar: '3/4', tilt: '0deg' }
 ];
 
 
