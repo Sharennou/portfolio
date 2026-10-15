@@ -160,16 +160,14 @@ const splitTitle = (text) => `<span class="sr-only">${text}</span><span aria-hid
 
 // ============================= RÉSEAUX =============================
 // À REMPLIR : collez vos deux adresses ici, c'est le SEUL endroit à modifier.
-// Elles alimentent à la fois les icônes à côté du burger et les pastilles du pied de page.
+// Elles alimentent les logos dans le menu et les pastilles du pied de page.
 // Tant qu'une url est vide, l'icône s'affiche en pointillés et ne mène nulle part.
 const socials = [
   { label: 'YouTube', url: 'https://www.youtube.com/@sharennou1716' },
   { label: 'TikTok',  url: 'https://www.tiktok.com/@youen.lbn' }
 ];
 
-// Gardé bien qu'inutilisé : les icônes rondes de la barre, seules à s'en servir,
-// ont été retirées à la demande de l'utilisateur. Le panneau de menu et le pied de
-// page affichent les réseaux en texte. À rebrancher si un rendu en icônes revient.
+// Logos SVG des réseaux affichés dans le panneau du menu.
 const socialIcons = {
   YouTube: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="5.5" width="18" height="13" rx="4"/><path d="M10.5 9.3v5.4l4.7-2.7z" fill="currentColor" stroke="none"/></svg>',
   TikTok: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M14 3v11.6a4.1 4.1 0 1 1-4.1-4.1"/><path d="M14 6.1a5.3 5.3 0 0 0 5.1 3.7"/></svg>'

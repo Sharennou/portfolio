@@ -358,9 +358,7 @@ main section[id]:focus { outline: none; }
   font-weight: 700;
   font-size: clamp(1.5rem, 5.5vw, 2rem);
   line-height: 1.05;
-  transition: transform 0.5s cubic-bezier(.16,.8,.24,1);
 }
-.menu-link:hover .menu-label, .menu-link:focus-visible .menu-label { transform: translateX(0.18em); }
 
 /* Vignette de droite : une vraie image quand elle existe, sinon le même motif
    graphique que les cartes de projets (classes .art-*), jamais un trou blanc. */
@@ -371,9 +369,7 @@ main section[id]:focus { outline: none; }
   border-radius: 18px;
   overflow: hidden;
   background: var(--ink-2);
-  transition: transform 0.5s cubic-bezier(.16,.8,.24,1);
 }
-.menu-link:hover .menu-thumb { transform: scale(1.06) rotate(-2.5deg); }
 .menu-thumb img { width: 100%; height: 100%; object-fit: cover; }
 .menu-mark {
   position: absolute;
@@ -406,18 +402,19 @@ main section[id]:focus { outline: none; }
   text-transform: uppercase;
   color: var(--ash);
 }
-.menu-social ul { display: flex; flex-direction: column; align-items: flex-start; gap: 0.15rem; }
+.menu-social ul { display: flex; flex-wrap: wrap; align-items: center; gap: 0.5rem; }
 .menu-social a {
-  display: inline-block;
-  padding: 0.12rem 0;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 44px;
+  height: 44px;
   font-size: 1.02rem;
   color: rgba(237,242,255,0.88);
-  transition: color 0.25s ease, transform 0.35s cubic-bezier(.16,.8,.24,1);
 }
-.menu-social a:hover { color: var(--ink); transform: translateX(5px); }
+.menu-social a svg { width: 26px; height: 26px; }
 /* url encore à renseigner : lien inerte, comme les icônes du haut */
 .menu-social a.is-todo { color: var(--ash); cursor: default; }
-.menu-social a.is-todo:hover { transform: none; }
 
 /* ============================= BUTTONS ============================= */
 .btn {
@@ -999,6 +996,7 @@ main section[id]:focus { outline: none; }
   color: var(--ink);
 }
 .contact-mail {
+  position: relative;
   margin-top: clamp(2.5rem, 6vw, 4rem);
   width: 100%;
   padding: clamp(1.8rem, 5vw, 3.4rem) clamp(1rem, 3vw, 2.5rem);
@@ -1022,6 +1020,12 @@ main section[id]:focus { outline: none; }
 }
 .contact-mail:hover,
 .contact-mail:focus-visible { background: var(--paper-dim); }
+.contact-copy { position: absolute; inset: 0; display: grid; place-items: center; visibility: hidden; text-transform: none; }
+.contact-mail:hover .contact-address,
+.contact-mail:focus-visible .contact-address { visibility: hidden; }
+.contact-mail:hover .contact-copy,
+.contact-mail:focus-visible .contact-copy { visibility: visible; }
+
 .contact-avail {
   margin-top: clamp(2rem, 4vw, 3rem);
   display: flex;
@@ -2249,7 +2253,7 @@ html.lenis, html.lenis body { height: auto; }
   .menu-label { font-size: clamp(1.35rem, 5.5vw, 1.8rem); }
   .menu-thumb { width: 60px; height: 60px; border-radius: 14px; }
   .menu-social { padding: 1rem; }
-  .menu-social ul { flex-direction: row; flex-wrap: wrap; gap: 0.5rem 1.5rem; }
+  .menu-social ul { gap: 0.5rem; }
   .menu-social a { display: inline-flex; align-items: center; min-height: 44px; }
 
   /* Le portrait accompagne le titre à droite ; le récit et le bouton gardent

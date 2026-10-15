@@ -278,11 +278,11 @@ const linkAttrs = (url) =>
   url ? ` href="${url}" target="_blank" rel="noopener noreferrer"`
       : ' href="#" aria-disabled="true" title="Lien à renseigner dans js/core.js"';
 
-// Liens texte en bas du panneau de menu
+// Logos des réseaux en bas du panneau de menu
 const menuSocial = document.getElementById('menuSocial');
 if (menuSocial) {
   menuSocial.innerHTML = socials
-    .map(({ label, url }) => `<li><a${linkAttrs(url)} class="${url ? '' : 'is-todo'}">${label}</a></li>`)
+    .map(({ label, url }) => `<li><a${linkAttrs(url)} class="${url ? '' : 'is-todo'}" aria-label="${label}">${socialIcons[label] || label}</a></li>`)
     .join('');
 }
 
@@ -364,3 +364,23 @@ else observeReveals();
 
 // Les webfonts changent les largeurs et hauteurs : on recalcule tout après leur chargement
 if (motionOK && document.fonts) document.fonts.ready.then(() => ScrollTrigger.refresh());
+
+// ============================= CONTACT : COPIER LE MAIL =============================
+document.querySelectorAll('.contact-mail').forEach(link => {
+  link.addEventListener('click', async event => {
+    if (!navigator.clipboard || !navigator.clipboard.writeText) return;
+    event.preventDefault();
+    const label = link.querySelector('.contact-copy');
+    try {
+      await navigator.clipboard.writeText(link.getAttribute('href').replace('mailto:', ''));
+      label.textContent = 'Copié !';
+      link.setAttribute('aria-label', 'Adresse e-mail copiée');
+      setTimeout(() => {
+        label.textContent = 'Copie le !';
+        link.setAttribute('aria-label', 'Copier l’adresse e-mail');
+      }, 2000);
+    } catch (_) {
+      location.href = link.getAttribute('href');
+    }
+  });
+});
